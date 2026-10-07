@@ -159,6 +159,116 @@
   transform: translateY(-3px);
 }
 
+/* Blog */
+.encabezado-blog h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.tarjeta-blog {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.tarjeta-blog:hover {
+  transform: translateY(-5px);
+}
+
+.tarjeta-blog-imagen {
+  background: var(--color-secundario);
+  min-height: 180px;
+}
+
+.tarjeta-blog-imagen-hero {
+  min-height: 220px;
+  border-radius: var(--radio);
+}
+
+.tarjeta-blog-contenido {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 1rem;
+}
+
+.tarjeta-blog-contenido h2 a {
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.tarjeta-blog-contenido h2 a:hover {
+  color: var(--color-primario);
+}
+
+.tarjeta-blog-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid var(--color-borde);
+  padding-top: 1rem;
+  margin-top: auto;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.icono-autor {
+  color: var(--color-secundario);
+  font-size: 1.8rem;
+}
+
+.blog-hero h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.blog-hero-meta {
+  color: var(--color-texto-suave);
+  font-size: 0.95rem;
+}
+
+.blog-hero-meta span,
+.blog-hero-meta strong {
+  display: block;
+}
+
+.articulo-contenido {
+  max-width: 50rem;
+  margin: 0 auto;
+  font-size: 1.05rem;
+}
+
+.caja-autor {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 50rem;
+  margin: 3rem auto 0;
+  padding: 1.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+}
+
+.caja-autor .icono-autor {
+  font-size: 3rem;
+}
+
+.caja-autor-info strong {
+  color: var(--color-texto);
+  font-size: 1.1rem;
+}
+
+.caja-autor-info span {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
 /* Footer */
 .pie-sitio {
   background: var(--color-primario-oscuro);

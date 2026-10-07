@@ -7,6 +7,7 @@ import Servicios from "./pages/Servicios";
 import DetalleServicio from "./pages/DetalleServicio";
 import Contacto from "./pages/Contacto";
 import Blog from "./pages/Blog";
+import DetalleBlog from "./pages/DetalleBlog";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/servicios/:categoria" element={<DetalleServicio />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<DetalleBlog />} />
       </Routes>
 
       <PiePagina />
