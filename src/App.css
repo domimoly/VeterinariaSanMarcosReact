@@ -117,6 +117,48 @@
   }
 }
 
+/* Encabezado de página tipo "Contacto" */
+.encabezado-pagina h1 {
+  color: var(--color-secundario);
+}
+
+/* Contacto */
+.contacto-seccion {
+  background: var(--color-secundario);
+  border-radius: var(--radio);
+  padding: 1.5rem;
+}
+
+.contacto-formulario-caja {
+  background: var(--color-superficie);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.contacto-mapa iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 20rem;
+  border: 0;
+  border-radius: var(--radio);
+}
+
+.btn-contacto {
+  background: var(--color-primario);
+  border: none;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radio);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-contacto:hover,
+.btn-contacto:focus {
+  background: var(--color-primario-oscuro);
+  transform: translateY(-3px);
+}
+
 /* Footer */
 .pie-sitio {
   background: var(--color-primario-oscuro);

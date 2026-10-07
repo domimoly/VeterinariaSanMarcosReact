@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { detalleServicios } from "../data/detalleServicios";
+import TarjetaDetalleServicio from "../components/TarjetaDetalleServicio";
 
 function DetalleServicio() {
   const { categoria } = useParams();
@@ -23,30 +24,10 @@ function DetalleServicio() {
       <hr className="mb-5" />
 
       {datos.variantes.map((variante) => (
-        <section
-          className="row align-items-center g-4 mb-5 detalle-servicio-fila"
+        <TarjetaDetalleServicio
+          variante={variante}
           key={`${variante.nombre}-${variante.subtitulo}`}
-        >
-          <div className="col-12 col-md-6">
-            <h2 className="h3">
-              {variante.nombre} <span className="text-secondary">{variante.subtitulo}</span>
-            </h2>
-            <p>{variante.descripcion}</p>
-            <ul className="list-unstyled d-flex flex-column gap-2">
-              {variante.caracteristicas.map((caracteristica) => (
-                <li key={caracteristica}>✓ {caracteristica}</li>
-              ))}
-            </ul>
-            <Link to="/contacto" className="boton-agenda">
-              Agendar visita
-            </Link>
-          </div>
-          <div className="col-12 col-md-6">
-            <div className="detalle-servicio-imagen rounded shadow d-flex align-items-center justify-content-center text-white">
-              <span className="p-3 text-center small">{variante.imagenAlt}</span>
-            </div>
-          </div>
-        </section>
+        />
       ))}
 
       <div className="text-center">

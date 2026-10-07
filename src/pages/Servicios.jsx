@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { categoriasServicios } from "../data/servicios";
+import TarjetaServicio from "../components/TarjetaServicio";
 
 function Servicios() {
   return (
@@ -30,7 +30,7 @@ function Servicios() {
         </div>
       </section>
 
-      {/* Una sección por categoría */}
+      {/* Una sección por categoría, cada tarjeta es el componente TarjetaServicio */}
       {categoriasServicios.map((categoria) => {
         const categoriasAcento = ["titulo-vacunas", "titulo-desparasitacion", "titulo-otros"];
         const claseIcono = categoriasAcento.includes(categoria.id)
@@ -38,33 +38,17 @@ function Servicios() {
           : "icono-secundario";
 
         return (
-        <section key={categoria.id} className="mt-5">
-          <hr className="mb-5" />
-          <h2 className="text-center mb-4">{categoria.titulo}</h2>
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-            {categoria.items.map((servicio) => (
-              <div className="col" key={servicio.nombre}>
-                <div className="card h-100 shadow-sm text-center p-3">
-                  <i className={`${servicio.icono} fs-1 mb-3 ${claseIcono}`}></i>
-                  <div className="card-body d-flex flex-column">
-                    <h3 className="h5">{servicio.nombre}</h3>
-                    <p className="text-secondary small flex-grow-1">{servicio.descripcion}</p>
-                    <p className="mb-1">
-                      <small>Duración aprox: {servicio.duracion}</small>
-                    </p>
-                    <p className="fw-bold mb-3">Valor: {servicio.precio}</p>
-                    <Link
-                      to={`/servicios/${servicio.categoriaSlug}`}
-                      className="btn btn-sm btn-servicio"
-                    >
-                      Conoce más →
-                    </Link>
-                  </div>
+          <section key={categoria.id} className="mt-5">
+            <hr className="mb-5" />
+            <h2 className="text-center mb-4">{categoria.titulo}</h2>
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+              {categoria.items.map((servicio) => (
+                <div className="col" key={servicio.nombre}>
+                  <TarjetaServicio servicio={servicio} claseIcono={claseIcono} />
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
         );
       })}
     </main>
