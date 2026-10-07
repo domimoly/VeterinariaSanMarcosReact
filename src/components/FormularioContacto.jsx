@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
-const inicial = { nombre: "", correo: "", comentario: "" };
+const inicial = { nombre: "", apellido: "", correo: "", comentario: "" };
 
 function FormularioContacto({ onEnviar }) {
   const [datos, setDatos] = useState(inicial);
@@ -17,41 +17,34 @@ function FormularioContacto({ onEnviar }) {
     evento.preventDefault();
     const nuevosErrores = {};
 
-    const nombre = datos.nombre.trim();
-    const correo = datos.correo.trim().toLowerCase();
-    const comentario = datos.comentario.trim();
+    if (!datos.nombre.trim()) nuevosErrores.nombre = "El nombre es obligatorio";
+    else if (datos.nombre.trim().length < 2) nuevosErrores.nombre = "Mínimo 2 caracteres";
+    else if (datos.nombre.trim().length > 50) nuevosErrores.nombre = "Máximo 50 caracteres";
 
-    if (!nombre) {
-      nuevosErrores.nombre = "El nombre es obligatorio";
-    } else if (nombre.length > 50) {
-      nuevosErrores.nombre = "Máximo 50 caracteres";
-    }
+    if (!datos.apellido.trim()) nuevosErrores.apellido = "El apellido es obligatorio";
+    else if (datos.apellido.trim().length < 2) nuevosErrores.apellido = "Mínimo 2 caracteres";
+    else if (datos.apellido.trim().length > 100) nuevosErrores.apellido = "Máximo 100 caracteres";
 
-    const formatoCorreoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-    if (!correo) {
-      nuevosErrores.correo = "El correo es obligatorio";
-    } else if (!correo.includes("@")) {
-      nuevosErrores.correo = "El correo debe contener @";
-    } else if (!formatoCorreoValido) {
-      nuevosErrores.correo = "Ingresa un correo válido, ej: nombre@dominio.cl";
-    }
-
-    if (!comentario) {
-      nuevosErrores.comentario = "Cuéntanos brevemente tu duda o comentario";
-    } else if (comentario.length < 10) {
-      nuevosErrores.comentario = "Escribe al menos 10 caracteres";
-    } else if (comentario.length > 500) {
-      nuevosErrores.comentario = "Máximo 500 caracteres";
-    }
+    if (!datos.correo.trim()) nuevosErrores.correo = "El correo es obligatorio";
+    else if (!datos.correo.includes("@")) nuevosErrores.correo = "El correo debe contener @";
+    if (!datos.comentario.trim()) nuevosErrores.comentario = "Cuéntanos brevemente tu duda";
+    else if (datos.comentario.trim().length < 10) nuevosErrores.comentario = "Escribe al menos 10 caracteres";
 
     setErrores(nuevosErrores);
-
     if (Object.keys(nuevosErrores).length > 0) {
       setMensajeExito("Revisa los campos marcados");
       return;
     }
 
-    onEnviar({ nombre, correo, comentario, fecha: new Date().toISOString() });
+    const nombre = datos.nombre.trim();
+    const apellido = datos.apellido.trim();
+    onEnviar({
+      nombre,
+      apellido,
+      correo: datos.correo.trim(),
+      comentario: datos.comentario.trim(),
+      fecha: new Date().toISOString(),
+    });
     setMensajeExito(`¡Gracias, ${nombre}! Recibimos tu mensaje y te contactaremos pronto.`);
     setDatos(inicial);
   }
@@ -64,8 +57,7 @@ function FormularioContacto({ onEnviar }) {
           name="nombre"
           type="text"
           maxLength={50}
-          autoComplete="name"
-          placeholder="Ej: Juan Pérez"
+          placeholder="Ej: Juan"
           value={datos.nombre}
           onChange={cambiar}
           isInvalid={Boolean(errores.nombre)}
@@ -73,12 +65,25 @@ function FormularioContacto({ onEnviar }) {
         <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
       </Form.Group>
 
+      <Form.Group className="mb-3" controlId="apellido">
+        <Form.Label>Apellido</Form.Label>
+        <Form.Control
+          name="apellido"
+          type="text"
+          maxLength={100}
+          placeholder="Ej: Pérez"
+          value={datos.apellido}
+          onChange={cambiar}
+          isInvalid={Boolean(errores.apellido)}
+        />
+        <Form.Control.Feedback type="invalid">{errores.apellido}</Form.Control.Feedback>
+      </Form.Group>
+
       <Form.Group className="mb-3" controlId="correo">
         <Form.Label>Correo</Form.Label>
         <Form.Control
           name="correo"
           type="email"
-          autoComplete="email"
           placeholder="ejemplo@correo.cl"
           value={datos.correo}
           onChange={cambiar}
@@ -93,7 +98,6 @@ function FormularioContacto({ onEnviar }) {
           name="comentario"
           as="textarea"
           rows={5}
-          maxLength={500}
           placeholder="Cuéntanos en qué podemos ayudarte"
           value={datos.comentario}
           onChange={cambiar}

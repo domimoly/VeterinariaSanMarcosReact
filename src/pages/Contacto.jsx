@@ -36,7 +36,7 @@ function Contacto() {
 
             {ultimoContacto && (
               <p className="text-secondary small mt-3 mb-0">
-                Último mensaje enviado: {ultimoContacto.nombre} ({ultimoContacto.correo})
+                Último mensaje enviado: {ultimoContacto.nombre} {ultimoContacto.apellido} ({ultimoContacto.correo})
               </p>
             )}
           </div>
