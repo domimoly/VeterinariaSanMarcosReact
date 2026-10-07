@@ -289,3 +289,104 @@
   color: #fff;
   text-decoration: underline;
 }
+
+/* Mi Perfil */
+.perfil-encabezado {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.avatar-perfil {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--color-secundario);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.perfil-caja {
+  background: var(--color-superficie);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.badge-rol {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+}
+
+.badge-rol-admin {
+  background: var(--color-primario-oscuro);
+}
+
+.badge-rol-recepcion {
+  background: var(--color-acento);
+}
+
+.badge-rol-dueno {
+  background: var(--color-secundario);
+}
+
+/* Mascotas */
+.icono-mascota {
+  color: var(--color-secundario);
+  font-size: 2.2rem;
+}
+
+.mascota-formulario-caja {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.5rem;
+}
+
+/* Ficha clínica */
+.estado-control {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+
+.estado-aldia {
+  background: var(--color-secundario);
+}
+
+.estado-pronto {
+  background: var(--color-acento);
+}
+
+.estado-vencida {
+  background: var(--color-primario-oscuro);
+}
+
+.aviso-vencimiento {
+  border-left: 0.3rem solid var(--color-acento);
+  background: var(--color-fondo);
+  border-radius: var(--radio);
+  padding: 1rem 1.25rem;
+}
+
+.tarjeta-consulta {
+  border: 1px solid var(--color-borde);
+  border-left: 0.3rem solid var(--color-secundario);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  padding: 1rem 1.25rem;
+}

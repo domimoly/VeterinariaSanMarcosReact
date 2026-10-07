@@ -25,10 +25,18 @@ function FormularioContacto({ onEnviar }) {
     else if (datos.apellido.trim().length < 2) nuevosErrores.apellido = "Mínimo 2 caracteres";
     else if (datos.apellido.trim().length > 100) nuevosErrores.apellido = "Máximo 100 caracteres";
 
-    if (!datos.correo.trim()) nuevosErrores.correo = "El correo es obligatorio";
-    else if (!datos.correo.includes("@")) nuevosErrores.correo = "El correo debe contener @";
-    if (!datos.comentario.trim()) nuevosErrores.comentario = "Cuéntanos brevemente tu duda";
-    else if (datos.comentario.trim().length < 10) nuevosErrores.comentario = "Escribe al menos 10 caracteres";
+    const correo = datos.correo.trim();
+    const formatoCorreoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+
+    if (!correo) nuevosErrores.correo = "El correo es obligatorio";
+    else if (!correo.includes("@")) nuevosErrores.correo = "El correo debe contener @";
+    else if (!formatoCorreoValido) nuevosErrores.correo = "Ingresa un correo válido, ej: nombre@dominio.cl";
+
+    const comentario = datos.comentario.trim();
+
+    if (!comentario) nuevosErrores.comentario = "Cuéntanos brevemente tu duda o comentario";
+    else if (comentario.length < 10) nuevosErrores.comentario = "Escribe al menos 10 caracteres";
+    else if (comentario.length > 500) nuevosErrores.comentario = "Máximo 500 caracteres";
 
     setErrores(nuevosErrores);
     if (Object.keys(nuevosErrores).length > 0) {
@@ -41,8 +49,8 @@ function FormularioContacto({ onEnviar }) {
     onEnviar({
       nombre,
       apellido,
-      correo: datos.correo.trim(),
-      comentario: datos.comentario.trim(),
+      correo,
+      comentario,
       fecha: new Date().toISOString(),
     });
     setMensajeExito(`¡Gracias, ${nombre}! Recibimos tu mensaje y te contactaremos pronto.`);
@@ -98,6 +106,7 @@ function FormularioContacto({ onEnviar }) {
           name="comentario"
           as="textarea"
           rows={5}
+          maxLength={500}
           placeholder="Cuéntanos en qué podemos ayudarte"
           value={datos.comentario}
           onChange={cambiar}

@@ -16,6 +16,7 @@ function Navegacion() {
             <Nav.Link as={NavLink} to="/servicios">Servicios</Nav.Link>
             <Nav.Link as={NavLink} to="/contacto">Contacto</Nav.Link>
             <Nav.Link as={NavLink} to="/blog">Blog</Nav.Link>
+            <Nav.Link as={NavLink} to="/mi-perfil">Mi Perfil</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

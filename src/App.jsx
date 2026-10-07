@@ -8,6 +8,7 @@ import DetalleServicio from "./pages/DetalleServicio";
 import Contacto from "./pages/Contacto";
 import Blog from "./pages/Blog";
 import DetalleBlog from "./pages/DetalleBlog";
+import MiPerfil from "./pages/MiPerfil";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<DetalleBlog />} />
+        <Route path="/mi-perfil" element={<MiPerfil />} />
       </Routes>
 
       <PiePagina />
