@@ -31,7 +31,13 @@ function Servicios() {
       </section>
 
       {/* Una sección por categoría */}
-      {categoriasServicios.map((categoria) => (
+      {categoriasServicios.map((categoria) => {
+        const categoriasAcento = ["titulo-vacunas", "titulo-desparasitacion", "titulo-otros"];
+        const claseIcono = categoriasAcento.includes(categoria.id)
+          ? "icono-acento"
+          : "icono-secundario";
+
+        return (
         <section key={categoria.id} className="mt-5">
           <hr className="mb-5" />
           <h2 className="text-center mb-4">{categoria.titulo}</h2>
@@ -39,7 +45,7 @@ function Servicios() {
             {categoria.items.map((servicio) => (
               <div className="col" key={servicio.nombre}>
                 <div className="card h-100 shadow-sm text-center p-3">
-                  <i className={`${servicio.icono} fs-1 mb-3`} style={{ color: "var(--color-secundario)" }}></i>
+                  <i className={`${servicio.icono} fs-1 mb-3 ${claseIcono}`}></i>
                   <div className="card-body d-flex flex-column">
                     <h3 className="h5">{servicio.nombre}</h3>
                     <p className="text-secondary small flex-grow-1">{servicio.descripcion}</p>
@@ -49,8 +55,7 @@ function Servicios() {
                     <p className="fw-bold mb-3">Valor: {servicio.precio}</p>
                     <Link
                       to={`/servicios/${servicio.categoriaSlug}`}
-                      className="btn btn-sm"
-                      style={{ background: "var(--color-secundario)", color: "#fff" }}
+                      className="btn btn-sm btn-servicio"
                     >
                       Conoce más →
                     </Link>
@@ -60,7 +65,8 @@ function Servicios() {
             ))}
           </div>
         </section>
-      ))}
+        );
+      })}
     </main>
   );
 }

@@ -22,9 +22,12 @@ function DetalleServicio() {
       <h1 className="text-center mb-4">{datos.titulo}</h1>
       <hr className="mb-5" />
 
-      {datos.variantes.map((variante, indice) => (
-        <section className="row align-items-center g-4 mb-5" key={`${variante.nombre}-${variante.subtitulo}`}>
-          <div className={`col-12 col-md-6 ${indice % 2 === 1 ? "order-md-2" : ""}`}>
+      {datos.variantes.map((variante) => (
+        <section
+          className="row align-items-center g-4 mb-5 detalle-servicio-fila"
+          key={`${variante.nombre}-${variante.subtitulo}`}
+        >
+          <div className="col-12 col-md-6">
             <h2 className="h3">
               {variante.nombre} <span className="text-secondary">{variante.subtitulo}</span>
             </h2>
@@ -38,11 +41,8 @@ function DetalleServicio() {
               Agendar visita
             </Link>
           </div>
-          <div className={`col-12 col-md-6 ${indice % 2 === 1 ? "order-md-1" : ""}`}>
-            <div
-              className="rounded shadow d-flex align-items-center justify-content-center text-white"
-              style={{ background: "var(--color-secundario)", minHeight: "220px" }}
-            >
+          <div className="col-12 col-md-6">
+            <div className="detalle-servicio-imagen rounded shadow d-flex align-items-center justify-content-center text-white">
               <span className="p-3 text-center small">{variante.imagenAlt}</span>
             </div>
           </div>

@@ -1,3 +1,4 @@
+/* Barra superior de contacto */
 .barra-contacto {
   background: var(--color-secundario);
   color: #fff;
@@ -7,6 +8,7 @@
   padding: 0.4rem 1rem;
 }
 
+/* Navbar */
 .navbar-sanmarcos {
   background: var(--color-primario-oscuro) !important;
 }
@@ -26,6 +28,7 @@
   font-weight: 700;
 }
 
+/* Servicios destacados (Index) */
 .servicio-item {
   background: var(--color-secundario);
   border-radius: var(--radio);
@@ -46,6 +49,7 @@
   background: var(--color-primario);
 }
 
+/* Reseñas */
 .resena-card {
   border-radius: var(--radio);
   box-shadow: var(--sombra);
@@ -57,6 +61,7 @@
   letter-spacing: 0.15rem;
 }
 
+/* Botón de agenda */
 .boton-agenda {
   display: inline-block;
   background: var(--color-secundario);
@@ -74,6 +79,45 @@
   transform: translateY(-3px);
 }
 
+/* Botón "Conoce más" de las tarjetas de Servicios (misma lógica que .boton-agenda) */
+.btn-servicio {
+  background: var(--color-secundario);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-servicio:hover,
+.btn-servicio:focus {
+  background: var(--color-primario);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+/* Colores intercalados de íconos en Servicios (igual que servicios.css original) */
+.icono-secundario {
+  color: var(--color-secundario);
+}
+
+.icono-acento {
+  color: var(--color-acento);
+}
+
+/* Placeholder de imagen en DetalleServicio (mientras no hay fotos reales) */
+.detalle-servicio-imagen {
+  background: var(--color-secundario);
+  min-height: 220px;
+}
+
+/* Filas de DetalleServicio en zigzag: la 2da, 4ta, 6ta... quedan con la imagen a la izquierda */
+@media (min-width: 768px) {
+  .detalle-servicio-fila:nth-of-type(even) {
+    flex-direction: row-reverse;
+  }
+}
+
+/* Footer */
 .pie-sitio {
   background: var(--color-primario-oscuro);
   color: var(--color-borde);
