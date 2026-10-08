@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import { resenas } from "../data/resenas";
 
-const servicios = ["Consultas", "Vacunación", "Cirugías", "Desparasitación", "Exámenes", "Otros"];
+const servicios = [
+  "Consultas",
+  "Vacunación",
+  "Cirugías",
+  "Desparasitación",
+  "Exámenes",
+  "Otros",
+];
 
 function Inicio() {
   return (
@@ -43,11 +50,15 @@ function Inicio() {
 
       {/* Atención y reseñas */}
       <section>
-        <h2 className="text-center">Atención cálida, cómoda, profesional y moderna</h2>
+        <h2 className="text-center">
+          Atención cálida, cómoda, profesional y moderna
+        </h2>
         <p className="text-center">
           Nuestro equipo médico está comprometido en brindar a tu mascota un
-          trato empático y libre de estrés.<br />
-          Contamos con instalaciones de primer nivel para asegurar su bienestar en cada visita.
+          trato empático y libre de estrés.
+          <br />
+          Contamos con instalaciones de primer nivel para asegurar su bienestar
+          en cada visita.
         </p>
         <div className="row g-4 align-items-stretch mt-3">
           <div className="col-12 col-md-6">
@@ -62,8 +73,12 @@ function Inicio() {
               <div className="resena-card p-3 bg-white" key={resena.id}>
                 <div className="d-flex justify-content-between flex-wrap">
                   <strong>{resena.autor}</strong>
-                  <span className="resena-estrellas" aria-label={`${resena.estrellas} de 5 estrellas`}>
-                    {"★".repeat(resena.estrellas)}{"☆".repeat(5 - resena.estrellas)}
+                  <span
+                    className="resena-estrellas"
+                    aria-label={`${resena.estrellas} de 5 estrellas`}
+                  >
+                    {"★".repeat(resena.estrellas)}
+                    {"☆".repeat(5 - resena.estrellas)}
                   </span>
                 </div>
                 <p className="mb-0 text-secondary">{resena.texto}</p>
@@ -84,13 +99,18 @@ function Inicio() {
             médica para tu mascota, revisar su historial clínico y estar al
             tanto de sus vacunas directamente desde nuestra plataforma web.
           </p>
-          <Link className="boton-agenda" to="/contacto">Agendar cita</Link>
+          <Link className="boton-agenda" to="/contacto">
+            Agendar cita
+          </Link>
           <div className="mt-4">
             <p>
-              ¿Tienes dudas o consultas sobre alguno de nuestros servicios?<br />
+              ¿Tienes dudas o consultas sobre alguno de nuestros servicios?
+              <br />
               Rellena el formulario de contacto aquí.
             </p>
-            <Link className="boton-agenda" to="/contacto">Contacto</Link>
+            <Link className="boton-agenda" to="/contacto">
+              Contacto
+            </Link>
           </div>
         </div>
         <div className="col-12 col-md-6">
@@ -101,12 +121,15 @@ function Inicio() {
       <hr className="my-5" />
 
       {/* Video */}
-      <section className="mx-auto" style={{ maxWidth: "55rem" }}>
-        <h2 className="text-center">La importancia de los cuidados de tu mascota</h2>
+      <section className="seccion-video mx-auto">
+        <h2 className="text-center">
+          La importancia de los cuidados de tu mascota
+        </h2>
         <p className="text-center">
           Adoptar es un compromiso de por vida. En Veterinaria San Marcos te
           acompañamos en cada etapa para garantizar que tu mejor amigo reciba
-          el cuidado, el cariño y la atención médica que merece, porque ellos confían en ti.
+          el cuidado, el cariño y la atención médica que merece, porque ellos
+          confían en ti.
         </p>
         <div className="ratio ratio-16x9 rounded shadow mt-3">
           <iframe

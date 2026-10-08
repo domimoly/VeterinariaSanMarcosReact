@@ -390,3 +390,8 @@
   background: var(--color-superficie);
   padding: 1rem 1.25rem;
 }
+
+/* Video de la portada */
+.seccion-video {
+  max-width: 55rem;
+}
