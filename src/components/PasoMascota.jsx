@@ -9,14 +9,18 @@ const todosLosServicios = categoriasServicios.flatMap((categoria) =>
   categoria.items.map((servicio) => ({ ...servicio, categoria: categoria.titulo }))
 );
 
-function PasoMascota({ mascotas, cita, onContinuar }) {
+function PasoMascota({ mascotas, cita, servicioInicial, onContinuar }) {
+  // Un servicio que llega desde la URL solo se usa si existe y se puede agendar en línea
+  const servicioDeLaUrl = todosLosServicios.find((s) => s.id === servicioInicial && s.agendable);
+
   const [datos, setDatos] = useState({
     mascotaId: cita.mascota ? String(cita.mascota.id) : "",
-    servicioId: cita.servicio ? cita.servicio.id : "",
+    servicioId: cita.servicio ? cita.servicio.id : (servicioDeLaUrl?.id ?? ""),
     observaciones: cita.observaciones,
   });
   const [categoria, setCategoria] = useState("Todas");
   const [errores, setErrores] = useState({});
+  const [aviso, setAviso] = useState("");
 
   if (mascotas.length === 0) {
     return (
@@ -41,8 +45,17 @@ function PasoMascota({ mascotas, cita, onContinuar }) {
   function cambiar(evento) {
     const { name, value } = evento.target;
     if (name === "mascotaId") {
-      // Al cambiar de mascota, el servicio elegido puede dejar de corresponder
-      setDatos({ ...datos, mascotaId: value, servicioId: "" });
+      // Al cambiar de mascota, el servicio elegido se mantiene solo si le corresponde
+      const nueva = mascotas.find((m) => String(m.id) === value);
+      const servicioActual = todosLosServicios.find((s) => s.id === datos.servicioId);
+      const sigueAplicando = Boolean(nueva && servicioActual && servicioAplica(servicioActual, nueva));
+
+      setDatos({ ...datos, mascotaId: value, servicioId: sigueAplicando ? datos.servicioId : "" });
+      setAviso(
+        servicioActual && nueva && !sigueAplicando
+          ? `${servicioActual.nombre} no corresponde a ${nueva.nombre}. Elige otro servicio.`
+          : ""
+      );
     } else {
       setDatos({ ...datos, [name]: value });
     }
@@ -96,7 +109,11 @@ function PasoMascota({ mascotas, cita, onContinuar }) {
         <legend className="form-label">¿Cómo podemos ayudar a {mascota ? mascota.nombre : "tu mascota"}?</legend>
 
         {!mascota ? (
-          <p className="text-secondary">Elige una mascota para ver los servicios disponibles.</p>
+          <p className="text-secondary">
+            {servicioDeLaUrl && datos.servicioId === servicioDeLaUrl.id
+              ? `Elegiste "${servicioDeLaUrl.nombre}". Selecciona tu mascota para continuar.`
+              : "Elige una mascota para ver los servicios disponibles."}
+          </p>
         ) : (
           <>
             <Form.Group className="mb-3" controlId="categoria">
@@ -110,6 +127,12 @@ function PasoMascota({ mascotas, cita, onContinuar }) {
                 ))}
               </Form.Select>
             </Form.Group>
+
+            {aviso && (
+              <p className="small text-danger fw-bold" role="alert">
+                {aviso}
+              </p>
+            )}
 
             <p className="small text-secondary">
               Mostramos solo los servicios que corresponden a {mascota.nombre} ({mascota.especie}).

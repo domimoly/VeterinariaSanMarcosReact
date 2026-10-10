@@ -637,3 +637,8 @@
   color: var(--color-texto-suave);
   font-weight: 700;
 }
+
+/* Botón .btn-contacto en tamaño pequeño (tarjetas de servicio) */
+.btn-contacto.btn-sm {
+  padding: 0.25rem 0.75rem;
+}

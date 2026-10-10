@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import PasosCita from "../components/PasosCita";
 import ResumenCita from "../components/ResumenCita";
 import PasoMascota from "../components/PasoMascota";
@@ -20,6 +21,10 @@ const citaInicial = {
 };
 
 function AgendarCita() {
+  // Desde Servicios se puede llegar con un servicio ya elegido: /agendar-cita?servicio=...
+  const [parametros] = useSearchParams();
+  const servicioInicial = parametros.get("servicio") ?? "";
+
   const [paso, setPaso] = useState(1);
   const [cita, setCita] = useState(citaInicial);
 
@@ -97,7 +102,12 @@ function AgendarCita() {
       <div className="row g-4">
         <div className="col-12 col-lg-8">
           <section className="perfil-caja">
-            {paso === 1 && <PasoMascota mascotas={mascotas} cita={cita} onContinuar={continuarMascota} />}
+            {paso === 1 && <PasoMascota
+                mascotas={mascotas}
+                cita={cita}
+                servicioInicial={servicioInicial}
+                onContinuar={continuarMascota}
+              />}
 
             {paso === 2 && (
               <PasoFecha
