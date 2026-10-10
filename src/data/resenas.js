@@ -20,4 +20,11 @@ export const resenas = [
     texto:
       "Esterilizaron a mi conejita la semana pasada y la recuperación ha sido maravillosa. Se nota la dedicación y el profesionalismo de todo el equipo de la clínica.",
   },
+  {
+    id: 4,
+    autor: "Camilo Méndez",
+    estrellas: 5,
+    texto:
+      "Buena atención y buen trato hacía las mascotas. Llevo a mi perrito Max desde que era un cachorro. Los doctores son muy empáticos, siempre explican el diagnóstico con claridad y el control de vacunas es excelente.",
+  }
 ];
