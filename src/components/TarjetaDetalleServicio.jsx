@@ -13,7 +13,7 @@ function TarjetaDetalleServicio({ variante }) {
             <li key={caracteristica}>✓ {caracteristica}</li>
           ))}
         </ul>
-        <Link to="/contacto" className="boton-agenda">
+        <Link to="/agendar-cita" className="boton-agenda">
           Agendar visita
         </Link>
       </div>

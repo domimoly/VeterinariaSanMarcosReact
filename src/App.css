@@ -397,3 +397,147 @@
 .seccion-video {
   max-width: 55rem;
 }
+
+/* Agendar cita */
+.pasos-cita {
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.paso-cita {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--color-texto-suave);
+}
+
+.paso-cita-numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--color-borde);
+  border-radius: 50%;
+  background: var(--color-superficie);
+}
+
+.paso-activo {
+  color: var(--color-texto);
+}
+
+.paso-activo .paso-cita-numero {
+  background: var(--color-secundario);
+  border-color: var(--color-secundario);
+  color: #fff;
+}
+
+.paso-completado {
+  color: var(--color-secundario);
+}
+
+.paso-completado .paso-cita-numero {
+  border-color: var(--color-secundario);
+  color: var(--color-secundario);
+}
+
+.resumen-cita {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .resumen-cita {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+.resumen-cita-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.resumen-cita-fila dt {
+  color: var(--color-texto-suave);
+  font-weight: 400;
+}
+
+.resumen-cita-fila dd {
+  text-align: right;
+  font-weight: 700;
+}
+
+.resumen-cita-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+}
+
+/* Agendar cita: elección de servicio */
+.servicios-lista {
+  max-height: 24rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 0.25rem;
+}
+
+.servicio-opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.servicio-opcion input {
+  accent-color: var(--color-secundario);
+  margin-top: 0.3rem;
+}
+
+.servicio-opcion:has(input:checked) {
+  border-color: var(--color-secundario);
+  background: var(--color-fondo);
+}
+
+.servicio-opcion:has(input:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.servicio-opcion-texto,
+.servicio-opcion-precio {
+  display: flex;
+  flex-direction: column;
+}
+
+.servicio-opcion-texto {
+  flex-grow: 1;
+}
+
+.servicio-opcion-texto small {
+  color: var(--color-texto-suave);
+}
+
+.servicio-opcion-precio {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.servicio-opcion-precio small {
+  color: var(--color-texto-suave);
+}

@@ -99,7 +99,7 @@ function Inicio() {
             médica para tu mascota, revisar su historial clínico y estar al
             tanto de sus vacunas directamente desde nuestra plataforma web.
           </p>
-          <Link className="boton-agenda" to="/contacto">
+          <Link className="boton-agenda" to="/agendar-cita">
             Agendar cita
           </Link>
           <div className="mt-4">
