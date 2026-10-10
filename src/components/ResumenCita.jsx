@@ -12,6 +12,7 @@ function FilaResumen({ titulo, valor }) {
 
 function ResumenCita({ cita }) {
   const mascota = cita.mascota ? `${cita.mascota.nombre} (${cita.mascota.especie})` : "";
+  const tutor = cita.tutor ? `${cita.tutor.nombre} ${cita.tutor.apellidos}` : "";
   const fechaHora = cita.fecha && cita.hora ? `${formatearFecha(cita.fecha)} a las ${cita.hora}` : "";
 
   return (
@@ -22,6 +23,7 @@ function ResumenCita({ cita }) {
         <FilaResumen titulo="Mascota" valor={mascota} />
         <FilaResumen titulo="Servicio" valor={cita.servicio ? cita.servicio.nombre : ""} />
         <FilaResumen titulo="Fecha y hora" valor={fechaHora} />
+        <FilaResumen titulo="Tutor" valor={tutor} />
         <FilaResumen titulo="Lugar" valor={clinica.direccion} />
         <FilaResumen titulo="Duración" valor={cita.servicio ? cita.servicio.duracion : ""} />
       </dl>

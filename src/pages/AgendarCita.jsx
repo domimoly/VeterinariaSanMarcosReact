@@ -4,8 +4,10 @@ import PasosCita from "../components/PasosCita";
 import ResumenCita from "../components/ResumenCita";
 import PasoMascota from "../components/PasoMascota";
 import PasoFecha from "../components/PasoFecha";
+import PasoTutor from "../components/PasoTutor";
 import { pasosCita } from "../data/pasosCita";
 import { mascotasDemo } from "../data/mascotas";
+import { usuarioDemo } from "../data/usuario";
 
 const citaInicial = {
   mascota: null,
@@ -26,6 +28,12 @@ function AgendarCita() {
     return guardado ? JSON.parse(guardado) : mascotasDemo;
   });
 
+  // Los datos del tutor vienen del perfil
+  const [usuario] = useState(() => {
+    const guardado = localStorage.getItem("usuarioVeterinariaSanMarcos");
+    return guardado ? JSON.parse(guardado) : usuarioDemo;
+  });
+
   // Citas que el dueño ya solicitó (las guarda el paso de confirmación)
   const [citasGuardadas] = useState(() => {
     const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
@@ -43,6 +51,11 @@ function AgendarCita() {
   function continuarFecha(datos) {
     setCita({ ...cita, ...datos });
     setPaso(3);
+  }
+
+  function continuarTutor(tutor) {
+    setCita({ ...cita, tutor });
+    setPaso(4);
   }
 
   return (
@@ -68,7 +81,16 @@ function AgendarCita() {
               />
             )}
 
-            {paso > 2 && (
+            {paso === 3 && (
+              <PasoTutor
+                usuario={usuario}
+                cita={cita}
+                onContinuar={continuarTutor}
+                onAtras={() => setPaso(2)}
+              />
+            )}
+
+            {paso === 4 && (
               <div>
                 <h2 className="h4">{pasosCita[paso - 1]}</h2>
                 <p className="text-secondary">Este paso se construirá en la siguiente etapa.</p>
