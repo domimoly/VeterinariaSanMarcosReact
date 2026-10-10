@@ -1,14 +1,6 @@
+import FilaResumen from "./FilaResumen";
 import { clinica } from "../data/clinica";
 import { formatearFecha } from "../utils/fechas";
-
-function FilaResumen({ titulo, valor }) {
-  return (
-    <div className="resumen-cita-fila">
-      <dt>{titulo}</dt>
-      <dd className="mb-0">{valor || <span className="text-secondary">Pendiente</span>}</dd>
-    </div>
-  );
-}
 
 function ResumenCita({ cita }) {
   const mascota = cita.mascota ? `${cita.mascota.nombre} (${cita.mascota.especie})` : "";

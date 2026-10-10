@@ -607,3 +607,33 @@
   border-radius: var(--radio);
   padding: 1rem 1.25rem;
 }
+
+/* Agendar cita: solicitud enviada */
+.cita-solicitada {
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.icono-exito {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--color-secundario);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.codigo-solicitud {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px dashed var(--color-secundario);
+  border-radius: var(--radio);
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}

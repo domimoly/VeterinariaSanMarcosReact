@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Button } from "react-bootstrap";
+import { useEffect, useState } from "react";
 import PasosCita from "../components/PasosCita";
 import ResumenCita from "../components/ResumenCita";
 import PasoMascota from "../components/PasoMascota";
 import PasoFecha from "../components/PasoFecha";
 import PasoTutor from "../components/PasoTutor";
+import PasoConfirmacion from "../components/PasoConfirmacion";
+import CitaSolicitada from "../components/CitaSolicitada";
 import { pasosCita } from "../data/pasosCita";
 import { mascotasDemo } from "../data/mascotas";
 import { usuarioDemo } from "../data/usuario";
@@ -35,10 +36,17 @@ function AgendarCita() {
   });
 
   // Citas que el dueño ya solicitó (las guarda el paso de confirmación)
-  const [citasGuardadas] = useState(() => {
+  const [citasGuardadas, setCitasGuardadas] = useState(() => {
     const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
     return guardado ? JSON.parse(guardado) : [];
   });
+
+  // La solicitud recién enviada (para mostrar el mensaje de éxito)
+  const [solicitud, setSolicitud] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("citasVeterinariaSanMarcos", JSON.stringify(citasGuardadas));
+  }, [citasGuardadas]);
 
   function continuarMascota(datos) {
     // Si cambió el servicio o la mascota, la hora elegida antes puede ya no servir
@@ -56,6 +64,25 @@ function AgendarCita() {
   function continuarTutor(tutor) {
     setCita({ ...cita, tutor });
     setPaso(4);
+  }
+
+  function confirmarCita(nuevaSolicitud) {
+    setCitasGuardadas([...citasGuardadas, nuevaSolicitud]);
+    setSolicitud(nuevaSolicitud);
+  }
+
+  function agendarOtra() {
+    setCita(citaInicial);
+    setPaso(1);
+    setSolicitud(null);
+  }
+
+  if (solicitud) {
+    return (
+      <main className="container py-4">
+        <CitaSolicitada solicitud={solicitud} onAgendarOtra={agendarOtra} />
+      </main>
+    );
   }
 
   return (
@@ -91,20 +118,13 @@ function AgendarCita() {
             )}
 
             {paso === 4 && (
-              <div>
-                <h2 className="h4">{pasosCita[paso - 1]}</h2>
-                <p className="text-secondary">Este paso se construirá en la siguiente etapa.</p>
-                <div className="d-flex gap-2 mt-4">
-                  <Button variant="outline-secondary" onClick={() => setPaso(paso - 1)}>
-                    Atrás
-                  </Button>
-                  {paso < pasosCita.length && (
-                    <Button className="btn-contacto" onClick={() => setPaso(paso + 1)}>
-                      Continuar
-                    </Button>
-                  )}
-                </div>
-              </div>
+              <PasoConfirmacion
+                cita={cita}
+                citasGuardadas={citasGuardadas}
+                onConfirmar={confirmarCita}
+                onAtras={() => setPaso(3)}
+                onCambiarHora={() => setPaso(2)}
+              />
             )}
           </section>
         </div>
