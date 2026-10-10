@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import PasosCita from "../components/PasosCita";
 import ResumenCita from "../components/ResumenCita";
 import PasoMascota from "../components/PasoMascota";
+import PasoFecha from "../components/PasoFecha";
 import { pasosCita } from "../data/pasosCita";
 import { mascotasDemo } from "../data/mascotas";
 
@@ -25,9 +26,23 @@ function AgendarCita() {
     return guardado ? JSON.parse(guardado) : mascotasDemo;
   });
 
+  // Citas que el dueño ya solicitó (las guarda el paso de confirmación)
+  const [citasGuardadas] = useState(() => {
+    const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
+    return guardado ? JSON.parse(guardado) : [];
+  });
+
   function continuarMascota(datos) {
-    setCita({ ...cita, ...datos });
+    // Si cambió el servicio o la mascota, la hora elegida antes puede ya no servir
+    const cambio =
+      !cita.servicio || cita.servicio.id !== datos.servicio.id || cita.mascota.id !== datos.mascota.id;
+    setCita({ ...cita, ...datos, ...(cambio ? { fecha: "", hora: "" } : {}) });
     setPaso(2);
+  }
+
+  function continuarFecha(datos) {
+    setCita({ ...cita, ...datos });
+    setPaso(3);
   }
 
   return (
@@ -44,7 +59,16 @@ function AgendarCita() {
           <section className="perfil-caja">
             {paso === 1 && <PasoMascota mascotas={mascotas} cita={cita} onContinuar={continuarMascota} />}
 
-            {paso > 1 && (
+            {paso === 2 && (
+              <PasoFecha
+                cita={cita}
+                citasGuardadas={citasGuardadas}
+                onContinuar={continuarFecha}
+                onAtras={() => setPaso(1)}
+              />
+            )}
+
+            {paso > 2 && (
               <div>
                 <h2 className="h4">{pasosCita[paso - 1]}</h2>
                 <p className="text-secondary">Este paso se construirá en la siguiente etapa.</p>

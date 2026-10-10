@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { regiones } from "../data/regiones";
+import { hoyIso } from "../utils/fechas";
 
 function FormularioPerfil({ usuario, onGuardar }) {
   const [datos, setDatos] = useState(usuario);
@@ -8,7 +9,7 @@ function FormularioPerfil({ usuario, onGuardar }) {
   const [mensaje, setMensaje] = useState("");
 
   const comunasDisponibles = regiones.find((region) => region.id === datos.region)?.comunas ?? [];
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = hoyIso();
 
   function cambiar(evento) {
     const { name, value } = evento.target;

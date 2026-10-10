@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { especies } from "../data/mascotas";
+import { hoyIso } from "../utils/fechas";
 
 const inicial = {
   nombre: "",
@@ -17,7 +18,7 @@ function FormularioMascota({ mascota, onGuardar, onCancelar }) {
   const [datos, setDatos] = useState(mascota ?? inicial);
   const [errores, setErrores] = useState({});
 
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = hoyIso();
 
   function cambiar(evento) {
     const { name, value, type, checked } = evento.target;

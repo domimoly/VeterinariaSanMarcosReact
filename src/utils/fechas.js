@@ -1,3 +1,4 @@
+// src/utils/fechas.js
 export function formatearFecha(fechaIso) {
   return new Date(`${fechaIso}T00:00:00`).toLocaleDateString("es-CL");
 }
@@ -19,3 +20,15 @@ export const etiquetasEstado = {
   pronto: "Vence pronto",
   aldia: "Al día",
 };
+
+// Fecha local en formato AAAA-MM-DD (toISOString usa UTC y puede adelantar el día en Chile)
+export function fechaIsoLocal(fecha) {
+  const anio = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  return `${anio}-${mes}-${dia}`;
+}
+
+export function hoyIso() {
+  return fechaIsoLocal(new Date());
+}
