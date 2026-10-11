@@ -31,7 +31,10 @@ function CitaSolicitada({ solicitud, onAgendarOtra }) {
       </dl>
 
       <div className="d-flex gap-2 justify-content-center flex-wrap mt-4">
-        <Button type="button" className="btn-contacto" onClick={onAgendarOtra}>
+        <Link to="/mi-perfil#mis-citas" className="btn btn-contacto">
+          Ver mis citas
+        </Link>
+        <Button type="button" variant="outline-secondary" onClick={onAgendarOtra}>
           Agendar otra cita
         </Button>
         <Link to="/" className="btn btn-outline-secondary">

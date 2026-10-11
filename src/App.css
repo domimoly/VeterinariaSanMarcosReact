@@ -385,7 +385,8 @@
   padding: 1rem 1.25rem;
 }
 
-.tarjeta-consulta {
+.tarjeta-consulta,
+.tarjeta-cita {
   border: 1px solid var(--color-borde);
   border-left: 0.3rem solid var(--color-secundario);
   border-radius: var(--radio);
@@ -641,4 +642,25 @@
 /* Botón .btn-contacto en tamaño pequeño (tarjetas de servicio) */
 .btn-contacto.btn-sm {
   padding: 0.25rem 0.75rem;
+}
+
+/* Mis citas */
+.estado-cita-pendiente {
+  background: var(--color-acento);
+}
+
+.estado-cita-confirmada {
+  background: var(--color-secundario);
+}
+
+.estado-cita-reagendada {
+  background: var(--color-primario);
+}
+
+.estado-cita-cancelada {
+  background: var(--color-primario-oscuro);
+}
+
+.tarjeta-cita-cancelada {
+  opacity: 0.6;
 }

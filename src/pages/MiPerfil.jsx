@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 import EncabezadoPerfil from "../components/EncabezadoPerfil";
 import FormularioPerfil from "../components/FormularioPerfil";
 import TarjetaMascota from "../components/TarjetaMascota";
 import FormularioMascota from "../components/FormularioMascota";
 import HistorialMascota from "../components/HistorialMascota";
+import ListaCitas from "../components/ListaCitas";
 import { usuarioDemo } from "../data/usuario";
 import { mascotasDemo } from "../data/mascotas";
 import { fichasClinicas } from "../data/fichasClinicas";
+import { citasDemo } from "../data/citas";
 
 function MiPerfil() {
   const [usuario, setUsuario] = useState(() => {
@@ -20,6 +23,13 @@ function MiPerfil() {
     return guardado ? JSON.parse(guardado) : mascotasDemo;
   });
 
+  const [citas, setCitas] = useState(() => {
+    const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
+    return guardado ? JSON.parse(guardado) : citasDemo;
+  });
+
+  const { hash } = useLocation();
+
   const [formularioAbierto, setFormularioAbierto] = useState(false);
   const [mascotaEditando, setMascotaEditando] = useState(null);
 
@@ -30,6 +40,15 @@ function MiPerfil() {
   useEffect(() => {
     localStorage.setItem("mascotasVeterinariaSanMarcos", JSON.stringify(mascotas));
   }, [mascotas]);
+
+  useEffect(() => {
+    localStorage.setItem("citasVeterinariaSanMarcos", JSON.stringify(citas));
+  }, [citas]);
+
+  // Permite llegar directo a una sección con /mi-perfil#mis-citas
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
+  }, [hash]);
 
   function guardarUsuario(nuevosDatos) {
     setUsuario(nuevosDatos);
@@ -57,6 +76,12 @@ function MiPerfil() {
       setMascotas([...mascotas, { ...datos, id: Date.now() }]);
     }
     cerrarFormulario();
+  }
+
+  function cancelarCita(id) {
+    if (window.confirm("¿Seguro que quieres cancelar esta cita?")) {
+      setCitas(citas.map((cita) => (cita.id === id ? { ...cita, estado: "Cancelada" } : cita)));
+    }
   }
 
   function eliminarMascota(id) {
@@ -120,6 +145,16 @@ function MiPerfil() {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="perfil-caja mt-4" id="mis-citas">
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+          <h2 className="h4 mb-0">Mis citas</h2>
+          <Link to="/agendar-cita" className="btn btn-contacto">
+            Agendar cita
+          </Link>
+        </div>
+        <ListaCitas citas={citas} onCancelar={cancelarCita} />
       </section>
 
       <section className="perfil-caja mt-4">

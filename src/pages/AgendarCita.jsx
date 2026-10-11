@@ -10,6 +10,7 @@ import CitaSolicitada from "../components/CitaSolicitada";
 import { pasosCita } from "../data/pasosCita";
 import { mascotasDemo } from "../data/mascotas";
 import { usuarioDemo } from "../data/usuario";
+import { citasDemo } from "../data/citas";
 
 const citaInicial = {
   mascota: null,
@@ -43,7 +44,7 @@ function AgendarCita() {
   // Citas que el dueño ya solicitó (las guarda el paso de confirmación)
   const [citasGuardadas, setCitasGuardadas] = useState(() => {
     const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : [];
+    return guardado ? JSON.parse(guardado) : citasDemo;
   });
 
   // La solicitud recién enviada (para mostrar el mensaje de éxito)
