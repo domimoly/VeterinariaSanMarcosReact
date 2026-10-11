@@ -18,4 +18,11 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // Las pruebas usan describe, it, expect y vi sin importarlos (globals: true en vite.config.js)
+    files: ['**/*.spec.{js,jsx}', 'src/test/**/*.js'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.vitest },
+    },
+  },
 ])
