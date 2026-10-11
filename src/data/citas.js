@@ -1,4 +1,7 @@
 // src/data/citas.js
+import { fechaRelativa, proximoDiaHabil } from "../utils/fechas";
+
+// Las fechas son relativas a hoy para que la demostración nunca caduque.
 // Citas de demostración. El estado lo cambia el personal de la clínica (Pendiente → Confirmada o
 // Reagendada); el dueño solo puede cancelar. Estados: Pendiente, Confirmada, Reagendada, Cancelada.
 export const citasDemo = [
@@ -13,7 +16,7 @@ export const citasDemo = [
     duracion: "30 min",
     duracionMin: 30,
     precio: "$15.000",
-    fecha: "2026-10-14",
+    fecha: proximoDiaHabil(4),
     hora: "10:30",
     observaciones: "",
     tutor: {
@@ -39,7 +42,7 @@ export const citasDemo = [
     duracion: "10 min",
     duracionMin: 10,
     precio: "$17.000",
-    fecha: "2026-10-16",
+    fecha: proximoDiaHabil(6),
     hora: "15:00",
     observaciones: "",
     tutor: {
@@ -65,7 +68,7 @@ export const citasDemo = [
     duracion: "30 min",
     duracionMin: 30,
     precio: "$15.000",
-    fecha: "2026-09-20",
+    fecha: fechaRelativa(-20),
     hora: "11:00",
     observaciones: "",
     tutor: {

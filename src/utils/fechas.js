@@ -32,3 +32,21 @@ export function fechaIsoLocal(fecha) {
 export function hoyIso() {
   return fechaIsoLocal(new Date());
 }
+
+// Fecha local a N días de hoy (negativo = pasado). Sirve para datos de demostración que no caduquen.
+export function fechaRelativa(dias) {
+  const fecha = new Date();
+  fecha.setDate(fecha.getDate() + dias);
+  return fechaIsoLocal(fecha);
+}
+
+// Igual que fechaRelativa, pero si cae en sábado o domingo avanza al lunes
+// (así la hora de demostración siempre cae dentro del horario de atención).
+export function proximoDiaHabil(dias) {
+  const fecha = new Date();
+  fecha.setDate(fecha.getDate() + dias);
+  while (fecha.getDay() === 0 || fecha.getDay() === 6) {
+    fecha.setDate(fecha.getDate() + 1);
+  }
+  return fechaIsoLocal(fecha);
+}

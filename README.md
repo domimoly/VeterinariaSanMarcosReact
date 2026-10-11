@@ -191,6 +191,8 @@ Mientras no exista el backend, la aplicación usa datos de demostración y guard
 
 La ficha clínica (vacunas, desparasitaciones y consultas) es de solo lectura, porque la registra el personal de la clínica. Para volver a los datos de demostración, borra estas claves desde las herramientas del navegador (*Application → Local Storage*).
 
+Las fechas de las citas y de la ficha clínica de demostración se calculan **relativas a la fecha de hoy**, para que siempre se vean todos los estados (próxima, vencida, al día). Como las citas se guardan en `localStorage` la primera vez que se abre la aplicación, quien ya la haya usado verá las fechas de ese primer día: para refrescarlas, borra la clave `citasVeterinariaSanMarcos`.
+
 ---
 
 ## 🔮 Próximos pasos
