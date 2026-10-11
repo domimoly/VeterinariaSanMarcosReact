@@ -1,4 +1,3 @@
-// src/components/TarjetaCita.spec.jsx
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
@@ -27,5 +26,12 @@ describe("TarjetaCita", () => {
     await usuario.click(screen.getByRole("button", { name: "Cancelar cita" }));
 
     expect(onCancelar).toHaveBeenCalledWith(7);
+  });
+
+  it("no ofrece cancelar una cita que ya está cancelada", () => {
+    render(<TarjetaCita cita={{ ...cita, estado: "Cancelada" }} onCancelar={vi.fn()} />);
+
+    expect(screen.getByText("Cancelada")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cancelar cita" })).not.toBeInTheDocument();
   });
 });
