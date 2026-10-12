@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import FilaResumen from "./FilaResumen";
-import { clinica } from "../data/clinica";
-import { formatearFecha } from "../utils/fechas";
+import { clinica } from "../../data/clinica";
+import { formatearFecha } from "../../utils/fechas";
 
 function CitaSolicitada({ solicitud, onAgendarOtra }) {
   const porCorreo = solicitud.tutor.medioRecordatorio === "Correo";

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import TarjetaCita from "./TarjetaCita";
-import { citaEsProxima, fechaHoraDeCita } from "../utils/citas";
+import { citaEsProxima, fechaHoraDeCita } from "../../utils/citas";
 
 function ListaCitas({ citas, onCancelar }) {
   if (citas.length === 0) {

@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import PasosCita from "../components/PasosCita";
-import ResumenCita from "../components/ResumenCita";
-import PasoMascota from "../components/PasoMascota";
-import PasoFecha from "../components/PasoFecha";
-import PasoTutor from "../components/PasoTutor";
-import PasoConfirmacion from "../components/PasoConfirmacion";
-import CitaSolicitada from "../components/CitaSolicitada";
-import { pasosCita } from "../data/pasosCita";
-import { mascotasDemo } from "../data/mascotas";
-import { usuarioDemo } from "../data/usuario";
-import { citasDemo } from "../data/citas";
+import PasosCita from "../../components/Tutor/PasosCita";
+import ResumenCita from "../../components/Tutor/ResumenCita";
+import PasoMascota from "../../components/Tutor/PasoMascota";
+import PasoFecha from "../../components/Tutor/PasoFecha";
+import PasoTutor from "../../components/Tutor/PasoTutor";
+import PasoConfirmacion from "../../components/Tutor/PasoConfirmacion";
+import CitaSolicitada from "../../components/Tutor/CitaSolicitada";
+import { pasosCita } from "../../data/Tutor/pasosCita";
+import { mascotasDemo } from "../../data/Tutor/mascotas";
+import { usuarioDemo } from "../../data/Tutor/usuario";
+import { citasDemo } from "../../data/citas";
+import "./Tutor.css";
 
 const citaInicial = {
   mascota: null,

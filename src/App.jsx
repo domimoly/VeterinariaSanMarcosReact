@@ -8,8 +8,8 @@ import DetalleServicio from "./pages/DetalleServicio";
 import Contacto from "./pages/Contacto";
 import Blog from "./pages/Blog";
 import DetalleBlog from "./pages/DetalleBlog";
-import MiPerfil from "./pages/MiPerfil";
-import AgendarCita from "./pages/AgendarCita";
+import MiPerfil from "./pages/Tutor/MiPerfil";
+import AgendarCita from "./pages/Tutor/AgendarCita";
 import NoEncontrada from "./pages/NoEncontrada";
 
 function App() {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form } from "react-bootstrap";
 import TablaControles from "./TablaControles";
 import TarjetaConsulta from "./TarjetaConsulta";
-import { estadoControl, etiquetasEstado, formatearFecha } from "../utils/fechas";
+import { estadoControl, etiquetasEstado, formatearFecha } from "../../utils/fechas";
 
 const fichaVacia = { vacunas: [], desparasitaciones: [], consultas: [] };
 

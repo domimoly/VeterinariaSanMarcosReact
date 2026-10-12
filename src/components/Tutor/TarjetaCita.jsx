@@ -1,7 +1,7 @@
 import { Button } from "react-bootstrap";
-import { clinica } from "../data/clinica";
-import { formatearFecha } from "../utils/fechas";
-import { citaEsProxima } from "../utils/citas";
+import { clinica } from "../../data/clinica";
+import { formatearFecha } from "../../utils/fechas";
+import { citaEsProxima } from "../../utils/citas";
 
 function TarjetaCita({ cita, onCancelar }) {
   const estado = cita.estado.toLowerCase();

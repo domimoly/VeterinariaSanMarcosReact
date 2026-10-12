@@ -1,4 +1,3 @@
-// src/data/servicios.js
 // Además de lo que se muestra en la tarjeta, cada servicio define a quién aplica
 // (especies, sexo, peso) para validar el agendamiento de citas.
 export const categoriasServicios = [

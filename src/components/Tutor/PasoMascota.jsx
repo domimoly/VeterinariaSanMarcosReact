@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { categoriasServicios } from "../data/servicios";
-import { clinica } from "../data/clinica";
-import { servicioAplica } from "../utils/citas";
+import { categoriasServicios } from "../../data/servicios";
+import { clinica } from "../../data/clinica";
+import { servicioAplica } from "../../utils/citas";
 
 const todosLosServicios = categoriasServicios.flatMap((categoria) =>
   categoria.items.map((servicio) => ({ ...servicio, categoria: categoria.titulo }))

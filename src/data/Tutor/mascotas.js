@@ -1,4 +1,3 @@
-// src/data/mascotas.js
 export const especies = ["Perro", "Gato", "Conejo", "Ave"];
 
 export const mascotasDemo = [

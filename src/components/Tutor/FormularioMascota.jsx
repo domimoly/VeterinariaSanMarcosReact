@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { especies } from "../data/mascotas";
-import { hoyIso } from "../utils/fechas";
+import { especies } from "../../data/Tutor/mascotas";
+import { hoyIso } from "../../utils/fechas";
 
 const inicial = {
   nombre: "",

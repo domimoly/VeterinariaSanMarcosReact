@@ -12,11 +12,21 @@ function Navegacion() {
         <Navbar.Toggle aria-controls="menu-principal" />
         <Navbar.Collapse id="menu-principal">
           <Nav className="ms-auto">
-            <Nav.Link as={NavLink} to="/" end>Inicio</Nav.Link>
-            <Nav.Link as={NavLink} to="/servicios">Servicios</Nav.Link>
-            <Nav.Link as={NavLink} to="/contacto">Contacto</Nav.Link>
-            <Nav.Link as={NavLink} to="/blog">Blog</Nav.Link>
-            <Nav.Link as={NavLink} to="/mi-perfil">Mi Perfil</Nav.Link>
+            <Nav.Link as={NavLink} to="/" end>
+              Inicio
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/servicios">
+              Servicios
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/contacto">
+              Contacto
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/blog">
+              Blog
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/mi-perfil">
+              Mi perfil
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -1,1 +1,0 @@
-export const pasosCita = ["Mascota", "Fecha", "Tutor", "Confirmar"];

@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
-import EncabezadoPerfil from "../components/EncabezadoPerfil";
-import FormularioPerfil from "../components/FormularioPerfil";
-import TarjetaMascota from "../components/TarjetaMascota";
-import FormularioMascota from "../components/FormularioMascota";
-import HistorialMascota from "../components/HistorialMascota";
-import ListaCitas from "../components/ListaCitas";
-import { usuarioDemo } from "../data/usuario";
-import { mascotasDemo } from "../data/mascotas";
-import { fichasClinicas } from "../data/fichasClinicas";
-import { citasDemo } from "../data/citas";
+import EncabezadoPerfil from "../../components/Tutor/EncabezadoPerfil";
+import FormularioPerfil from "../../components/Tutor/FormularioPerfil";
+import TarjetaMascota from "../../components/Tutor/TarjetaMascota";
+import FormularioMascota from "../../components/Tutor/FormularioMascota";
+import HistorialMascota from "../../components/Tutor/HistorialMascota";
+import ListaCitas from "../../components/Tutor/ListaCitas";
+import { usuarioDemo } from "../../data/Tutor/usuario";
+import { mascotasDemo } from "../../data/Tutor/mascotas";
+import { fichasClinicas } from "../../data/fichasClinicas";
+import { citasDemo } from "../../data/citas";
+import "./Tutor.css";
 
 function MiPerfil() {
   const [usuario, setUsuario] = useState(() => {

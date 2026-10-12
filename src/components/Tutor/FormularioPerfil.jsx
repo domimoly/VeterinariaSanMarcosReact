@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { regiones } from "../data/regiones";
-import { hoyIso } from "../utils/fechas";
+import { regiones } from "../../data/Tutor/regiones";
+import { hoyIso } from "../../utils/fechas";
 
 function FormularioPerfil({ usuario, onGuardar }) {
   const [datos, setDatos] = useState(usuario);

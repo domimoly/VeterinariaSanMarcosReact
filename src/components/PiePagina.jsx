@@ -18,7 +18,10 @@ function PiePagina() {
             <p className="mb-1">📍 Av. San Marcos 123, Rancagua</p>
             <p className="mb-1">📞 +56 9 1234 5678</p>
             <p className="mb-1">
-              ✉️ <a href="mailto:contacto@veterinariasanmarcos.cl">contacto@veterinariasanmarcos.cl</a>
+              ✉️{" "}
+              <a href="mailto:contacto@veterinariasanmarcos.cl">
+                contacto@veterinariasanmarcos.cl
+              </a>
             </p>
             <p className="mb-0">⏰ Urgencias 24 hrs · 365 días</p>
           </div>
@@ -26,9 +29,15 @@ function PiePagina() {
           <div className="col-12 col-md-4">
             <h3 className="h5">Enlaces rápidos</h3>
             <ul className="list-unstyled d-flex flex-column gap-2">
-              <li><Link to="/servicios">Nuestros servicios</Link></li>
-              <li><Link to="/blog">Blog veterinario</Link></li>
-              <li><Link to="/contacto">Formulario de contacto</Link></li>
+              <li>
+                <Link to="/servicios">Nuestros servicios</Link>
+              </li>
+              <li>
+                <Link to="/blog">Blog veterinario</Link>
+              </li>
+              <li>
+                <Link to="/contacto">Formulario de contacto</Link>
+              </li>
             </ul>
           </div>
         </div>

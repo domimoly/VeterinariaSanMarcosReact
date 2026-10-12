@@ -1,4 +1,3 @@
-// src/data/citas.js
 import { fechaRelativa, proximoDiaHabil } from "../utils/fechas";
 
 // Las fechas son relativas a hoy para que la demostración nunca caduque.

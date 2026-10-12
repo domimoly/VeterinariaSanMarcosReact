@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import FilaResumen from "./FilaResumen";
-import { clinica } from "../data/clinica";
-import { formatearFecha } from "../utils/fechas";
-import { validarHorario } from "../utils/horarios";
+import { clinica } from "../../data/clinica";
+import { formatearFecha } from "../../utils/fechas";
+import { validarHorario } from "../../utils/horarios";
 
 function PasoConfirmacion({ cita, citasGuardadas, onConfirmar, onAtras, onCambiarHora }) {
   const [acepta, setAcepta] = useState(false);

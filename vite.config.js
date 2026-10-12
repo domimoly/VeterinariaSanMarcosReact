@@ -12,15 +12,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      // Alcance: solo los archivos propios (Inicio, Servicios, Agendar cita, Contacto, Blog y Mi perfil)
+      // Alcance: las vistas del tutor (carpetas Tutor) y mis vistas públicas (Inicio, Servicios, Contacto y Blog)
       include: [
         'src/utils/**/*.js',
-        'src/pages/{Inicio,Servicios,DetalleServicio,AgendarCita,Contacto,Blog,DetalleBlog,MiPerfil}.jsx',
+        'src/pages/Tutor/**/*.jsx',
+        'src/components/Tutor/**/*.jsx',
+        'src/pages/{Inicio,Servicios,DetalleServicio,Contacto,Blog,DetalleBlog}.jsx',
         'src/components/{TarjetaServicio,TarjetaDetalleServicio,TarjetaBlog,FormularioContacto}.jsx',
-        'src/components/{EncabezadoPerfil,FormularioPerfil,TarjetaMascota,FormularioMascota}.jsx',
-        'src/components/{HistorialMascota,TablaControles,TarjetaConsulta}.jsx',
-        'src/components/{PasosCita,ResumenCita,FilaResumen,PasoMascota,PasoFecha,PasoTutor,PasoConfirmacion}.jsx',
-        'src/components/{CitaSolicitada,TarjetaCita,ListaCitas}.jsx',
       ],
     },
   },

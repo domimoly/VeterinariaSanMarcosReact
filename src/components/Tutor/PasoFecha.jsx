@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { agendamiento, horarioTexto } from "../data/clinica";
+import { agendamiento, horarioTexto } from "../../data/clinica";
 import {
   bloquesNecesarios,
   diasDeLaSemana,
@@ -8,7 +8,7 @@ import {
   horasDelDia,
   semanaDeFecha,
   validarHorario,
-} from "../utils/horarios";
+} from "../../utils/horarios";
 
 const nombresSemana = ["Esta semana", "Próxima semana", "En 3 semanas", "En 4 semanas"];
 const semanas = Array.from({ length: agendamiento.semanasMaximas }, (_, indice) => indice);

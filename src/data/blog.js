@@ -1,4 +1,3 @@
-// src/data/blog.js
 export const publicacionesBlog = [
   {
     "slug": "01",

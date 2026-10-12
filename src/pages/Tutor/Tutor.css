@@ -1,0 +1,366 @@
+/* Estilos de las vistas del tutor (Mi perfil y Agendar cita).
+   Las clases compartidas (.btn-contacto, .boton-agenda, .btn-servicio, .encabezado-pagina)
+   viven en src/App.css. */
+
+/* Mi Perfil */
+.perfil-encabezado {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.avatar-perfil {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--color-secundario);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.perfil-caja {
+  background: var(--color-superficie);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.badge-rol {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+}
+
+.badge-rol-admin {
+  background: var(--color-primario-oscuro);
+}
+
+.badge-rol-recepcion {
+  background: var(--color-acento);
+}
+
+.badge-rol-dueno {
+  background: var(--color-secundario);
+}
+
+/* Mascotas */
+.icono-mascota {
+  color: var(--color-secundario);
+  font-size: 2.2rem;
+}
+
+.mascota-formulario-caja {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.5rem;
+}
+
+/* Ficha clínica */
+.estado-control {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+
+.estado-aldia {
+  background: var(--color-secundario);
+}
+
+.estado-pronto {
+  background: var(--color-acento);
+}
+
+.estado-vencida {
+  background: var(--color-primario-oscuro);
+}
+
+.aviso-vencimiento {
+  border-left: 0.3rem solid var(--color-acento);
+  background: var(--color-fondo);
+  border-radius: var(--radio);
+  padding: 1rem 1.25rem;
+}
+
+.tarjeta-consulta,
+.tarjeta-cita {
+  border: 1px solid var(--color-borde);
+  border-left: 0.3rem solid var(--color-secundario);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  padding: 1rem 1.25rem;
+}
+
+/* Mis citas */
+.estado-cita-pendiente {
+  background: var(--color-acento);
+}
+
+.estado-cita-confirmada {
+  background: var(--color-secundario);
+}
+
+.estado-cita-reagendada {
+  background: var(--color-primario);
+}
+
+.estado-cita-cancelada {
+  background: var(--color-primario-oscuro);
+}
+
+.tarjeta-cita-cancelada {
+  opacity: 0.6;
+}
+
+/* Agendar cita */
+.pasos-cita {
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.paso-cita {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--color-texto-suave);
+}
+
+.paso-cita-numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--color-borde);
+  border-radius: 50%;
+  background: var(--color-superficie);
+}
+
+.paso-activo {
+  color: var(--color-texto);
+}
+
+.paso-activo .paso-cita-numero {
+  background: var(--color-secundario);
+  border-color: var(--color-secundario);
+  color: #fff;
+}
+
+.paso-completado {
+  color: var(--color-secundario);
+}
+
+.paso-completado .paso-cita-numero {
+  border-color: var(--color-secundario);
+  color: var(--color-secundario);
+}
+
+.resumen-cita {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .resumen-cita {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+.resumen-cita-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.resumen-cita-fila dt {
+  color: var(--color-texto-suave);
+  font-weight: 400;
+}
+
+.resumen-cita-fila dd {
+  text-align: right;
+  font-weight: 700;
+}
+
+.resumen-cita-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+}
+
+/* Agendar cita: elección de servicio */
+.servicios-lista {
+  max-height: 24rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 0.25rem;
+}
+
+.servicio-opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.servicio-opcion input {
+  accent-color: var(--color-secundario);
+  margin-top: 0.3rem;
+}
+
+.servicio-opcion:has(input:checked) {
+  border-color: var(--color-secundario);
+  background: var(--color-fondo);
+}
+
+.servicio-opcion:has(input:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.servicio-opcion-texto,
+.servicio-opcion-precio {
+  display: flex;
+  flex-direction: column;
+}
+
+.servicio-opcion-texto {
+  flex-grow: 1;
+}
+
+.servicio-opcion-texto small {
+  color: var(--color-texto-suave);
+}
+
+.servicio-opcion-precio {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.servicio-opcion-precio small {
+  color: var(--color-texto-suave);
+}
+
+/* Agendar cita: elección de día y hora */
+.opciones-dias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
+  gap: 0.5rem;
+}
+
+.opciones-horas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+  gap: 0.5rem;
+}
+
+.opcion-cita {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.opcion-cita input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.opcion-cita:hover {
+  transform: translateY(-2px);
+}
+
+.opcion-cita:has(input:checked) {
+  background: var(--color-secundario);
+  border-color: var(--color-secundario);
+  color: #fff;
+}
+
+.opcion-cita:has(input:focus-visible) {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+.opcion-cita:has(input:disabled) {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.opcion-hora:has(input:disabled) strong {
+  text-decoration: line-through;
+}
+
+.aviso-horario {
+  border-left: 0.3rem solid var(--color-secundario);
+  background: var(--color-fondo);
+  border-radius: var(--radio);
+  padding: 1rem 1.25rem;
+}
+
+/* Agendar cita: solicitud enviada */
+.cita-solicitada {
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.icono-exito {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--color-secundario);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.codigo-solicitud {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px dashed var(--color-secundario);
+  border-radius: var(--radio);
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}

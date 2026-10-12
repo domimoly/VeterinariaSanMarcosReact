@@ -86,6 +86,31 @@ Al enviar, la solicitud queda en estado **Pendiente**. La clínica debe **confir
 | **Confirmada** / **Reagendada** | La clínica (módulo de recepción, aún no implementado). |
 | **Cancelada** | El dueño, mientras la cita no haya llegado. |
 
+### Cómo se guarda una cita
+
+Las citas viven en `localStorage`, en la clave `citasVeterinariaSanMarcos`, como un arreglo de objetos con esta forma. Es el **contrato** que debe respetar cualquier módulo que las lea o las modifique (por ejemplo, el de recepción):
+
+| Campo | Ejemplo | Quién lo define |
+|---|---|---|
+| `id` | `1760000000000` | Se genera al enviar la solicitud. |
+| `codigo` | `"SM-000000"` | Se genera al enviar la solicitud. |
+| `mascotaId`, `mascotaNombre`, `especie` | `1`, `"Max"`, `"Perro"` | Mascota elegida por el dueño. |
+| `servicioId`, `servicioNombre` | `"consulta-general"`, `"Consulta General"` | Servicio elegido (ver `src/data/servicios.js`). |
+| `duracion`, `duracionMin`, `precio` | `"30 min"`, `30`, `"$15.000"` | Copiados del servicio al momento de agendar. |
+| `fecha` | `"2026-10-14"` | Formato `AAAA-MM-DD`. |
+| `hora` | `"10:30"` | Formato `HH:MM`, dentro del horario de atención. |
+| `observaciones` | `"Alergia al pollo"` | Antecedentes escritos por el dueño. |
+| `tutor` | `{ run, nombre, apellidos, telefono, correo, medioRecordatorio }` | Datos de contacto del dueño. |
+| `estado` | `"Pendiente"` | Nace como `Pendiente`; la clínica lo cambia. |
+| `nota` | `"La clínica propuso este nuevo horario..."` | **Opcional.** Solo la agrega la clínica, y se muestra al dueño. |
+| `creadaEn` | `"2026-10-11T15:00:00.000Z"` | Fecha y hora de creación (ISO). |
+
+**Qué debería hacer el módulo de recepción:**
+- **Confirmar:** cambiar `estado` a `"Confirmada"`.
+- **Proponer otro horario:** cambiar `fecha` y `hora` por el nuevo horario, poner `estado` en `"Reagendada"` y explicar el motivo en `nota`.
+- No tocar el resto de los campos, y guardar el arreglo completo en la misma clave.
+- El cupo de un horario se calcula a partir de las citas cuyo `estado` **no** es `"Cancelada"`, así que cancelar o reagendar libera el cupo automáticamente.
+
 > ⚠️ **Supuestos de esta versión.** Sin backend, la ocupación de cada hora es simulada (una parte fija según el día y la hora, y otra que viene de las citas guardadas), y el horario, los cupos y la anticipación son valores de referencia. Todos se ajustan en un solo lugar: `src/data/clinica.js`.
 
 ---
@@ -130,18 +155,24 @@ VeterinariaSanMarcosReact/
 │   └── img/                  → Imágenes del sitio
 │
 ├── src/
-│   ├── components/           → Piezas reutilizables (Navegacion, TarjetaServicio, PasoFecha, TarjetaCita...)
-│   ├── pages/                → Vistas completas (Inicio, Servicios, AgendarCita, Contacto, Blog, MiPerfil...)
-│   ├── data/                 → Datos simulados y configuración de la clínica
+│   ├── components/           → Piezas compartidas (Navegacion, TarjetaServicio, FormularioContacto...)
+│   │   └── Tutor/            → Piezas de las vistas del tutor (PasoFecha, TarjetaCita, HistorialMascota...)
+│   ├── pages/                → Vistas públicas (Inicio, Servicios, Contacto, Blog...)
+│   │   └── Tutor/            → Vistas del tutor (MiPerfil, AgendarCita) y su hoja de estilos Tutor.css
+│   ├── data/                 → Datos y configuración compartidos (servicios, blog, citas, clinica...)
+│   │   └── Tutor/            → Datos propios del tutor (usuario, mascotas, regiones)
 │   ├── utils/                → Lógica auxiliar (fechas, horarios y reglas de citas)
+│   ├── test/                 → Configuración de las pruebas
 │   ├── App.jsx               → Rutas de la aplicación
-│   ├── App.css               → Estilos propios sobre Bootstrap
+│   ├── App.css               → Estilos compartidos sobre Bootstrap
 │   ├── index.css             → Variables de color y estilos base
 │   └── main.jsx              → Punto de entrada
 │
 ├── index.html
 └── package.json
 ```
+
+**Organización por roles:** lo que ven todos los usuarios o usan varios roles va en la raíz de cada carpeta; lo exclusivo de un rol va dentro de la carpeta de ese rol (`Tutor`, y las de los demás roles del sistema). Las pruebas viven junto al archivo que prueban (`*.spec.jsx`).
 
 **Criterio de organización:** una *página* decide qué mostrar y de dónde saca los datos; un *componente* es una pieza visual que recibe esos datos por props. Los estilos viven en las hojas CSS y los componentes solo usan `className`. La lógica de negocio (disponibilidad de horas, qué servicio corresponde a qué mascota) está en `utils/`, separada de las pantallas.
 
@@ -173,6 +204,9 @@ Abre la dirección que muestra la terminal (normalmente `http://localhost:5173`)
 | `npm run build` | Genera la versión de producción en `dist/` |
 | `npm run preview` | Sirve la versión compilada para revisarla |
 | `npm run lint` | Revisa el código con ESLint |
+| `npm run test` | Ejecuta las pruebas en modo observador |
+| `npm run test:run` | Ejecuta las pruebas una sola vez |
+| `npm run coverage` | Ejecuta las pruebas y genera el informe de cobertura en `coverage/` |
 
 ---
 

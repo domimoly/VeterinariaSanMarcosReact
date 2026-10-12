@@ -1,4 +1,3 @@
-// src/data/clinica.js
 export const clinica = {
   nombre: "Veterinaria San Marcos",
   direccion: "Av. San Marcos 123, Rancagua",
