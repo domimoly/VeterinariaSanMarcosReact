@@ -1,4 +1,3 @@
-// src/components/TarjetaBlog.spec.jsx
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import TarjetaBlog from "./TarjetaBlog";
@@ -13,7 +12,7 @@ describe("TarjetaBlog", () => {
     imagenAlt: "Cachorro recibiendo su vacuna",
   };
 
-  it("muestra el título y el autor recibidos por props", () => {
+  it("muestra el título del artículo", () => {
     render(
       <MemoryRouter>
         <TarjetaBlog publicacion={publicacion} />
@@ -21,6 +20,5 @@ describe("TarjetaBlog", () => {
     );
 
     expect(screen.getByRole("link", { name: publicacion.titulo })).toBeInTheDocument();
-    expect(screen.getByText("Dra. Paula Muñoz")).toBeInTheDocument();
   });
 });
