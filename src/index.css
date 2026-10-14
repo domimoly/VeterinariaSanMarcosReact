@@ -1,0 +1,33 @@
+:root {
+  --color-primario: #343535;
+  --color-primario-oscuro: #1b1b1b;
+  --color-secundario: #49b8c0;
+  --color-acento: #eb7bc0;
+  --color-texto: #183044;
+  --color-texto-suave: #526575;
+  --color-fondo: #f4f7fa;
+  --color-superficie: #ffffff;
+  --color-borde: #c9d4de;
+  --radio: 0.75rem;
+  --sombra: 0 0.5rem 1.25rem rgba(20, 48, 68, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-primario);
+}
