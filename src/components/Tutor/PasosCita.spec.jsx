@@ -1,3 +1,4 @@
+// src/components/Tutor/PasosCita.spec.jsx
 import { render, screen } from "@testing-library/react";
 import PasosCita from "./PasosCita";
 

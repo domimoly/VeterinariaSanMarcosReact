@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import { estadoControl } from "./fechas";
 
-// Prueba: Muestra el uso de un reloj simulado.
+// Prueba adicional (no forma parte de las 10 del plan): muestra el uso de un reloj simulado.
 describe("estadoControl", () => {
   beforeEach(() => {
     // Se simula el reloj: la función usa la fecha de hoy y la prueba debe dar siempre lo mismo
