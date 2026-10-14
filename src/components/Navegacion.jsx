@@ -15,14 +15,23 @@ function Navegacion() {
             <Nav.Link as={NavLink} to="/" end>
               Inicio
             </Nav.Link>
+            <Nav.Link as={NavLink} to="/nosotros">
+              Nosotros
+            </Nav.Link>
             <Nav.Link as={NavLink} to="/servicios">
               Servicios
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/tienda">
+              Tienda
             </Nav.Link>
             <Nav.Link as={NavLink} to="/contacto">
               Contacto
             </Nav.Link>
             <Nav.Link as={NavLink} to="/blog">
               Blog
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/carrito">
+              Carrito
             </Nav.Link>
             <Nav.Link as={NavLink} to="/mi-perfil">
               Mi perfil
