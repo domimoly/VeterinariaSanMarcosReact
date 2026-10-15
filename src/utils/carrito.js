@@ -19,16 +19,10 @@ export function agregarProducto(carrito, codigo) {
   return carrito.map((item) => (item.codigo === codigo ? { ...item, cantidad: item.cantidad + 1 } : item));
 }
 
-export function cambiarCantidadProducto(carrito, codigo, cambio) {
-  const producto = productos.find((p) => p.codigo === codigo);
-
-  return carrito.map((item) => {
-    const nuevaCantidad = item.cantidad + cambio;
-    if (item.codigo !== codigo || nuevaCantidad < 1 || nuevaCantidad > producto.stock) return item;
-    return { ...item, cantidad: nuevaCantidad };
-  });
+export function pagoAprobado() {
+  return Math.random() < 0.7;
 }
 
-export function quitarProducto(carrito, codigo) {
-  return carrito.filter((item) => item.codigo !== codigo);
+export function crearNumeroOrden() {
+  return String(Date.now()).slice(-8);
 }

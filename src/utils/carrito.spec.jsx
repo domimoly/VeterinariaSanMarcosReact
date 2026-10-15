@@ -1,5 +1,6 @@
+// src/utils/carrito.spec.jsx
 import { vi } from "vitest";
-import { agregarProducto, guardarCarrito } from "./carrito";
+import { agregarProducto, crearNumeroOrden, guardarCarrito, pagoAprobado } from "./carrito";
 
 describe("carrito", () => {
   it("agrega un producto nuevo con cantidad 1", () => {
@@ -20,5 +21,23 @@ describe("carrito", () => {
 
     expect(espia).toHaveBeenCalledWith("carritoVeterinariaSanMarcos", JSON.stringify(carrito));
     espia.mockRestore();
+  });
+
+  it("aprueba el pago cuando el azar cae bajo 0.7", () => {
+    const espia = vi.spyOn(Math, "random").mockReturnValue(0.1);
+
+    expect(pagoAprobado()).toBe(true);
+    espia.mockRestore();
+  });
+
+  it("rechaza el pago cuando el azar cae sobre 0.7", () => {
+    const espia = vi.spyOn(Math, "random").mockReturnValue(0.9);
+
+    expect(pagoAprobado()).toBe(false);
+    espia.mockRestore();
+  });
+
+  it("crea un número de orden de 8 dígitos", () => {
+    expect(crearNumeroOrden()).toMatch(/^\d{8}$/);
   });
 });

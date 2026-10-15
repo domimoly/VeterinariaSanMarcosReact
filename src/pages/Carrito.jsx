@@ -1,128 +1,89 @@
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { productos } from "../data/productos";
 import { formatearPrecio } from "../utils/precios";
-import {
-  agregarProducto,
-  cambiarCantidadProducto,
-  guardarCarrito,
-  leerCarrito,
-  quitarProducto,
-} from "../utils/carrito";
-import ItemCarrito from "../components/ItemCarrito";
-import TarjetaProducto from "../components/TarjetaProducto";
+import { crearNumeroOrden, guardarCarrito, leerCarrito, pagoAprobado } from "../utils/carrito";
+import TablaCarrito from "../components/TablaCarrito";
+import FormularioCliente from "../components/FormularioCliente";
+import CompraExitosa from "../components/CompraExitosa";
+import CompraFallida from "../components/CompraFallida";
+
+const datosVacios = {
+  nombre: "",
+  apellidos: "",
+  correo: "",
+  calle: "",
+  departamento: "",
+  region: "",
+  comuna: "",
+  indicaciones: "",
+};
 
 function Carrito() {
-  const [carrito, setCarrito] = useState(leerCarrito);
-  const [compraRealizada, setCompraRealizada] = useState(false);
+  const [carrito, setCarrito] = useState(() => leerCarrito());
+  const [estado, setEstado] = useState("carrito"); // "carrito", "exito" o "error"
+  const [datosCliente, setDatosCliente] = useState(datosVacios);
+  const [compra, setCompra] = useState(null);
 
   useEffect(() => {
     guardarCarrito(carrito);
   }, [carrito]);
-
-  function agregarAlCarrito(codigo) {
-    setCarrito(agregarProducto(carrito, codigo));
-  }
-
-  function cambiarCantidad(codigo, cambio) {
-    setCarrito(cambiarCantidadProducto(carrito, codigo, cambio));
-  }
-
-  function eliminarDelCarrito(codigo) {
-    setCarrito(quitarProducto(carrito, codigo));
-  }
 
   // Une cada item guardado (codigo + cantidad) con los datos del catálogo
   const lineas = carrito
     .map((item) => ({ producto: productos.find((p) => p.codigo === item.codigo), cantidad: item.cantidad }))
     .filter((linea) => linea.producto);
 
-  let unidades = 0;
-  let subtotal = 0;
+  let total = 0;
   lineas.forEach((linea) => {
-    unidades += linea.cantidad;
-    subtotal += linea.producto.precio * linea.cantidad;
+    total += linea.producto.precio * linea.cantidad;
   });
 
-  // Todavía no hay reglas de descuento
-  const descuentos = 0;
-  const total = subtotal - descuentos;
+  function pagar(datos) {
+    const numero = crearNumeroOrden();
+    setDatosCliente(datos);
+    setCompra({ numero, datos, lineas, total });
 
-  const sugeridos = productos
-    .filter((producto) => !carrito.some((item) => item.codigo === producto.codigo))
-    .slice(0, 2);
-
-  function continuarCompra() {
-    setCarrito([]);
-    setCompraRealizada(true);
+    if (pagoAprobado()) {
+      setCarrito([]);
+      setEstado("exito");
+    } else {
+      setEstado("error");
+    }
   }
 
   return (
     <main className="container py-4">
-      <header className="encabezado-pagina text-center mb-4">
-        <h1>Carrito</h1>
-      </header>
+      {estado === "exito" && <CompraExitosa compra={compra} />}
 
-      <section aria-label="Carrito y resumen de compra" className="row g-4">
-        <div className="col-12 col-lg-8">
-          {lineas.length > 0 ? (
-            lineas.map((linea) => (
-              <ItemCarrito
-                key={linea.producto.codigo}
-                producto={linea.producto}
-                cantidad={linea.cantidad}
-                onCambiarCantidad={cambiarCantidad}
-                onEliminar={eliminarDelCarrito}
-              />
-            ))
-          ) : (
-            <div className="card shadow-sm p-4 text-center" role="status">
-              {compraRealizada ? (
-                <p className="mb-3">¡Gracias por tu compra! (hehe)</p>
-              ) : (
-                <p className="mb-3">Tu carrito está vacío.</p>
-              )}
-              <div>
-                <Link to="/tienda" className="btn btn-servicio">
-                  Ir a la tienda
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
+      {estado === "error" && <CompraFallida compra={compra} onReintentar={() => setEstado("carrito")} />}
 
-        <div className="col-12 col-lg-4">
-          <div className="card shadow-sm p-4">
-            <h2 className="h4">Resumen de la compra</h2>
-            <p className="mb-1">
-              Productos ({unidades}): <strong>{formatearPrecio(subtotal)}</strong>
-            </p>
-            <p className="mb-1">
-              Descuentos (0): <strong>{formatearPrecio(descuentos)}</strong>
-            </p>
-            <p className="mb-3">
-              Total: <strong>{formatearPrecio(total)}</strong>
-            </p>
-            <Button type="button" className="btn-contacto" disabled={lineas.length === 0} onClick={continuarCompra}>
-              Continuar compra
-            </Button>
+      {estado === "carrito" && lineas.length === 0 && (
+        <div className="card shadow-sm p-4 text-center" role="status">
+          <h1 className="h3">Carrito de compra</h1>
+          <p>Tu carrito está vacío.</p>
+          <div>
+            <Link to="/tienda" className="btn btn-servicio">
+              Ir a la tienda
+            </Link>
           </div>
         </div>
-      </section>
+      )}
 
-      <section aria-labelledby="titulo-sugeridos" className="mt-5">
-        <h2 id="titulo-sugeridos" className="text-center mb-4">
-          ¿Y si le sumas algo más?
-        </h2>
-        <div className="row row-cols-1 row-cols-sm-2 g-4">
-          {sugeridos.map((producto) => (
-            <div className="col" key={producto.codigo}>
-              <TarjetaProducto producto={producto} cantidadEnCarrito={0} onAgregar={agregarAlCarrito} />
+      {estado === "carrito" && lineas.length > 0 && (
+        <div className="card shadow-sm p-4">
+          <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+            <div>
+              <h1 className="h3">Carrito de compra</h1>
+              <p className="text-secondary small mb-0">Completa la siguiente información</p>
             </div>
-          ))}
+            <div className="total-destacado">Total a pagar: {formatearPrecio(total)}</div>
+          </div>
+
+          <TablaCarrito lineas={lineas} />
+          <FormularioCliente datosIniciales={datosCliente} total={total} onPagar={pagar} />
         </div>
-      </section>
+      )}
     </main>
   );
 }
