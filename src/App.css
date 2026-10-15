@@ -336,3 +336,12 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* Total destacado del carrito */
+.total-destacado {
+  background: var(--color-secundario);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+}
