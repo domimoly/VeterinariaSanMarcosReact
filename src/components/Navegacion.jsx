@@ -10,9 +10,9 @@ function Navegacion() {
     try {
       const usuario = JSON.parse(localStorage.getItem("usuarioVeterinariaSanMarcos") || "null");
       setEsAdministrador(
-        sessionStorage.getItem("adminVeterinariaAutenticado") === "true"
-        && usuario?.rol === "Administrador"
-        && usuario?.correo?.toLowerCase() === "admin@duoc.cl"
+        sessionStorage.getItem("adminVeterinariaAutenticado") === "true" &&
+        usuario?.rol === "Administrador" &&
+        usuario?.correo?.toLowerCase() === "admin@duoc.cl"
       );
     } catch {
       setEsAdministrador(false);
@@ -35,6 +35,12 @@ function Navegacion() {
             <Nav.Link as={NavLink} to="/servicios">
               Servicios
             </Nav.Link>
+            <Nav.Link as={NavLink} to="/nosotros">
+              Nosotros
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/tienda">
+              Tienda
+            </Nav.Link>
             <Nav.Link as={NavLink} to="/contacto">
               Contacto
             </Nav.Link>
@@ -46,7 +52,9 @@ function Navegacion() {
             </Nav.Link>
             {esAdministrador && (
               <>
-                <Nav.Link as={NavLink} to="/admin/usuarios">Administración</Nav.Link>
+                <Nav.Link as={NavLink} to="/admin/usuarios">
+                  Administración
+                </Nav.Link>
                 <Nav.Link
                   as="button"
                   className="nav-link"
@@ -63,6 +71,9 @@ function Navegacion() {
             )}
             <Nav.Link as={NavLink} to="/login">
               Iniciar sesión
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/carrito">
+              Carrito
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

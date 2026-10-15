@@ -10,9 +10,12 @@ import Blog from "./pages/Blog";
 import DetalleBlog from "./pages/DetalleBlog";
 import MiPerfil from "./pages/Tutor/MiPerfil";
 import AgendarCita from "./pages/Tutor/AgendarCita";
-import NoEncontrada from "./pages/NoEncontrada";
 import Login from "./pages/Login";
 import Usuarios from "./pages/Admin/Usuarios";
+import Nosotros from "./pages/Nosotros";
+import Tienda from "./pages/Tienda";
+import Carrito from "./pages/Carrito";
+import NoEncontrada from "./pages/NoEncontrada";
 
 function App() {
   return (
@@ -31,6 +34,9 @@ function App() {
         <Route path="/admin/usuarios" element={<Usuarios />} />
         <Route path="/login" element={<Login />} />
         <Route path="/agendar-cita" element={<AgendarCita />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        <Route path="/tienda" element={<Tienda />} />
+        <Route path="/carrito" element={<Carrito />} />
         <Route path="*" element={<NoEncontrada />} />
       </Routes>
 
