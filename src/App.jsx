@@ -10,6 +10,9 @@ import Blog from "./pages/Blog";
 import DetalleBlog from "./pages/DetalleBlog";
 import MiPerfil from "./pages/Tutor/MiPerfil";
 import AgendarCita from "./pages/Tutor/AgendarCita";
+import Nosotros from "./pages/Nosotros";
+import Tienda from "./pages/Tienda";
+import Carrito from "./pages/Carrito";
 import NoEncontrada from "./pages/NoEncontrada";
 
 function App() {
@@ -27,6 +30,9 @@ function App() {
         <Route path="/blog/:slug" element={<DetalleBlog />} />
         <Route path="/mi-perfil" element={<MiPerfil />} />
         <Route path="/agendar-cita" element={<AgendarCita />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        <Route path="/tienda" element={<Tienda />} />
+        <Route path="/carrito" element={<Carrito />} />
         <Route path="*" element={<NoEncontrada />} />
       </Routes>
 

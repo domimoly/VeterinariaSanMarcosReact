@@ -301,3 +301,38 @@
 .btn-contacto.btn-sm {
   padding: 0.25rem 0.75rem;
 }
+
+/* Tienda y Carrito */
+.producto-imagen {
+  height: 180px;
+  background: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.producto-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.producto-precio {
+  color: var(--color-primario-oscuro);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.carrito-imagen {
+  width: 100%;
+  max-width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.etiqueta-producto {
+  color: var(--color-secundario);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
