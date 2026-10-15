@@ -19,8 +19,6 @@ export default defineConfig({
         'src/components/Tutor/**/*.jsx',
         'src/pages/{Inicio,Servicios,DetalleServicio,Contacto,Blog,DetalleBlog}.jsx',
         'src/components/{TarjetaServicio,TarjetaDetalleServicio,TarjetaBlog,FormularioContacto}.jsx',
-        'src/pages/{Tienda,Carrito,Nosotros}.jsx',
-        'src/components/{TarjetaProducto,ItemCarrito,TarjetaClinica,TarjetaPuntos,TarjetaResena}.jsx',
       ],
     },
   },

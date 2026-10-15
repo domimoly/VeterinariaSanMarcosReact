@@ -1,7 +1,24 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Navegacion() {
+  const location = useLocation();
+  const [esAdministrador, setEsAdministrador] = useState(false);
+
+  useEffect(() => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuarioVeterinariaSanMarcos") || "null");
+      setEsAdministrador(
+        sessionStorage.getItem("adminVeterinariaAutenticado") === "true" &&
+        usuario?.rol === "Administrador" &&
+        usuario?.correo?.toLowerCase() === "admin@duoc.cl"
+      );
+    } catch {
+      setEsAdministrador(false);
+    }
+  }, [location.pathname]);
+
   return (
     <Navbar expand="md" variant="dark" className="navbar-sanmarcos py-3" sticky="top">
       <Container>
@@ -15,11 +32,11 @@ function Navegacion() {
             <Nav.Link as={NavLink} to="/" end>
               Inicio
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/nosotros">
-              Nosotros
-            </Nav.Link>
             <Nav.Link as={NavLink} to="/servicios">
               Servicios
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/nosotros">
+              Nosotros
             </Nav.Link>
             <Nav.Link as={NavLink} to="/tienda">
               Tienda
@@ -30,11 +47,33 @@ function Navegacion() {
             <Nav.Link as={NavLink} to="/blog">
               Blog
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/carrito">
-              Carrito
-            </Nav.Link>
             <Nav.Link as={NavLink} to="/mi-perfil">
               Mi perfil
+            </Nav.Link>
+            {esAdministrador && (
+              <>
+                <Nav.Link as={NavLink} to="/admin/usuarios">
+                  Administración
+                </Nav.Link>
+                <Nav.Link
+                  as="button"
+                  className="nav-link"
+                  onClick={() => {
+                    sessionStorage.removeItem("adminVeterinariaAutenticado");
+                    localStorage.removeItem("usuarioVeterinariaSanMarcos");
+                    setEsAdministrador(false);
+                    window.location.assign("/");
+                  }}
+                >
+                  Cerrar sesión
+                </Nav.Link>
+              </>
+            )}
+            <Nav.Link as={NavLink} to="/login">
+              Iniciar sesión
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/carrito">
+              Carrito
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

@@ -48,9 +48,16 @@ Este repositorio es la **migración a React** del sitio estático original (HTML
 | ✉️ | **Contacto** | Formulario con validaciones, último mensaje guardado, mapa y botón "Cómo llegar". |
 | 📰 | **Blog** | Listado de artículos y detalle de cada uno. |
 | 👤 | **Mi perfil** | Datos personales, mascotas, **mis citas** y ficha clínica con vacunas y avisos de vencimiento. |
+| 🛡️ | **Administración** | Vista de usuarios de prueba con búsqueda, filtros y edición de datos guardados en `localStorage`. |
 | 🧭 | **Página 404** | Mensaje claro para direcciones que no existen. |
 
 ---
+
+## 🛡️ Panel de administración
+
+El acceso de demostración utiliza `admin@duoc.cl` y `admin123`. Al iniciar sesión se abre `/admin/usuarios`, donde se pueden consultar, buscar y filtrar usuarios ficticios y editar sus datos. La información se persiste en `localStorage` bajo la clave `usuariosVeterinariaSanMarcos`. La sesión actual se identifica con `usuarioVeterinariaSanMarcos`.
+
+Este control de acceso es solo demostrativo y no reemplaza la autenticación ni los permisos de un backend.
 
 ## 📅 Agendamiento de citas
 
@@ -245,3 +252,8 @@ Las fechas de las citas y de la ficha clínica de demostración se calculan **re
 - **Desarrollo:** [Tu Nombre / domimoly](https://github.com/domimoly)
 - **Asignatura:** Desarrollo FullStack II — DSY1104 (2026)
 - **Recursos visuales:** imágenes utilizadas estrictamente con fines académicos.
+
+
+### Acceso a administración
+
+La vista `/admin/usuarios` solo se habilita después de iniciar sesión con `admin@duoc.cl` y `admin123`. La autorización de administración se guarda en `sessionStorage` para la pestaña actual; entrar directamente a la ruta redirige al login. Usa **Cerrar sesión** para salir. Esta validación es adecuada para una demostración frontend, pero un sistema real debe validar credenciales y permisos en un backend.

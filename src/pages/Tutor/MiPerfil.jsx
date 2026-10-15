@@ -95,12 +95,15 @@ function MiPerfil() {
     <main className="container py-4">
       <EncabezadoPerfil usuario={usuario} />
 
-      {usuario.rol === "Administrador" && (
+      {usuario.rol === "Administrador" && sessionStorage.getItem("adminVeterinariaAutenticado") === "true" && (
         <div className="perfil-caja mt-4">
           <h2 className="h5">Panel de administración</h2>
-          <p className="mb-0 text-secondary">
-            Como administrador podrás gestionar usuarios y roles desde el panel (próximamente).
+          <p className="mb-3 text-secondary">
+            Consulta las cuentas registradas y administra sus datos desde el panel.
           </p>
+          <Link to="/admin/usuarios" className="btn btn-contacto">
+            <i className="bi bi-people me-2" aria-hidden="true" />Gestionar usuarios
+          </Link>
         </div>
       )}
 
