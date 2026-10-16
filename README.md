@@ -239,7 +239,7 @@ Las fechas de las citas y de la ficha clínica de demostración se calculan **re
 
 - [x] Botón "Cómo llegar" en el mapa de contacto
 - [x] Solicitud y seguimiento de citas desde el lado del dueño
-- [ ] Reemplazar los marcadores de imagen por las fotografías definitivas
+- [x] Reemplazar los marcadores de imagen por las fotografías definitivas
 - [ ] Autenticación real y rutas protegidas por rol
 - [x] Módulo de recepción para confirmar o reagendar citas y registrar fichas clínicas
 - [ ] Conexión con el backend de microservicios (Spring Boot + API REST) y disponibilidad real de horas

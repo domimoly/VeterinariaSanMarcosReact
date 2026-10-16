@@ -18,9 +18,11 @@ function TarjetaDetalleServicio({ variante }) {
         </Link>
       </div>
       <div className="col-12 col-md-6">
-        <div className="detalle-servicio-imagen rounded shadow d-flex align-items-center justify-content-center text-white">
-          <span className="p-3 text-center small">{variante.imagenAlt}</span>
-        </div>
+        <img
+          src={variante.imagen}
+          alt={variante.imagenAlt}
+          className="img-fluid rounded shadow detalle-servicio-imagen"
+        />
       </div>
     </section>
   );

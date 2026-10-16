@@ -29,11 +29,15 @@ function DetalleBlog() {
             </p>
           </div>
           <div className="col-12 col-md-6">
-            <div className="tarjeta-blog-imagen tarjeta-blog-imagen-hero d-flex align-items-center justify-content-center text-white">
-              <span className="p-3 text-center small">
-                {publicacion.contenido ? publicacion.contenido.heroImagenAlt : publicacion.imagenAlt}
-              </span>
-            </div>
+            <img
+              src={publicacion.imagen}
+              alt={
+                publicacion.contenido
+                  ? publicacion.contenido.heroImagenAlt
+                  : publicacion.imagenAlt
+              }
+              className="img-fluid rounded shadow tarjeta-blog-imagen-hero"
+            />
           </div>
         </header>
 

@@ -5,6 +5,7 @@ export const publicacionesBlog = [
     "extracto": "¡No te enredes con las vacunas! Acá te explicamos en fácil cuántas son, para qué sirven y cuánto se ponen.",
     "autor": "Dr. Roberto Sánchez",
     "fecha": "04 de sept, 2026",
+    "imagen": "/img/Nobivac DHPPi.jpg",
     "imagenAlt": "Cachorro recibiendo su primera vacuna",
     "contenido": {
       "parrafos": [
@@ -23,6 +24,7 @@ export const publicacionesBlog = [
     "extracto": "Controlar el peso de tu gatito es esencial para cuidar de su salud y detectar problemas a tiempo. En este artículo te contamos lo que debes saber al respecto.",
     "autor": "Dra. Camila Rojas",
     "fecha": "04 de sept, 2026",
+    "imagen": "/img/gatopulento.png",
     "imagenAlt": "Gato siendo pesado en la clínica",
     "contenido": {
       "parrafos": [
@@ -41,6 +43,7 @@ export const publicacionesBlog = [
     "extracto": "Existen alimentos comunes en nuestra cocina que pueden ser fatales para perros y gatos. Descubre cuáles son y cómo prevenir intoxicaciones.",
     "autor": "Dr. Roberto Sánchez",
     "fecha": "01 de sept, 2026",
+    "imagen": "/img/imagenReview-1.jpg",
     "imagenAlt": "Gato comiendo",
     "contenido": null
   },
@@ -50,6 +53,7 @@ export const publicacionesBlog = [
     "extracto": "Mudarse es estresante para ti, pero para tu mascota es un cambio total de territorio. Sigue estos consejos para que la transición sea lo más amigable posible.",
     "autor": "Dra. Camila Rojas",
     "fecha": "28 de ago, 2026",
+    "imagen": "/img/blog-02.png",
     "imagenAlt": "Dueño jugando con su mascota",
     "contenido": null
   }

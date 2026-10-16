@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 function TarjetaBlog({ publicacion }) {
   return (
     <div className="tarjeta-blog h-100">
-      <div className="tarjeta-blog-imagen d-flex align-items-center justify-content-center text-white">
-        <span className="p-3 text-center small">{publicacion.imagenAlt}</span>
+      <div className="tarjeta-blog-imagen">
+        <img
+          src={publicacion.imagen}
+          alt={publicacion.imagenAlt}
+          className="img-fluid w-100 h-100 object-fit-cover"
+        />
       </div>
       <div className="tarjeta-blog-contenido">
         <h2 className="h5">
