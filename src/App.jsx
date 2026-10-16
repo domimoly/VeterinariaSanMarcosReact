@@ -16,6 +16,8 @@ import Nosotros from "./pages/Nosotros";
 import Tienda from "./pages/Tienda";
 import Carrito from "./pages/Carrito";
 import NoEncontrada from "./pages/NoEncontrada";
+import AgendaCitas from "./pages/Recepcionista/AgendaCitas";
+import FichasPacientes from "./pages/Recepcionista/FichasPacientes";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
         <Route path="/nosotros" element={<Nosotros />} />
         <Route path="/tienda" element={<Tienda />} />
         <Route path="/carrito" element={<Carrito />} />
+        <Route path="/recepcion" element={<AgendaCitas />} />
+        <Route path="/recepcion/fichas" element={<FichasPacientes />} />
         <Route path="*" element={<NoEncontrada />} />
       </Routes>
 

@@ -1,4 +1,3 @@
-// src/utils/horarios.js
 import { agendamiento, horarioAtencion } from "../data/clinica";
 import { fechaIsoLocal } from "./fechas";
 

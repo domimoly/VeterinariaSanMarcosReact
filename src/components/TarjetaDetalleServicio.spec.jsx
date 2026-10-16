@@ -1,3 +1,4 @@
+// Pruebas adicionales para la cobertura
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import TarjetaDetalleServicio from "./TarjetaDetalleServicio";

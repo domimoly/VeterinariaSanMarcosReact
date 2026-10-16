@@ -345,3 +345,107 @@
   border-radius: 0.5rem;
   padding: 0.6rem 1rem;
 }
+
+/* Compartido por Tutor y Recepcionista: insignias de estado y selector de día y hora */
+.estado-control {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+
+.estado-aldia {
+  background: var(--color-secundario);
+}
+
+.estado-pronto {
+  background: var(--color-acento);
+}
+
+.estado-vencida {
+  background: var(--color-primario-oscuro);
+}
+
+.estado-cita-pendiente {
+  background: var(--color-acento);
+}
+
+.estado-cita-confirmada {
+  background: var(--color-secundario);
+}
+
+.estado-cita-reagendada {
+  background: var(--color-primario);
+}
+
+.estado-cita-cancelada {
+  background: var(--color-primario-oscuro);
+}
+
+.opciones-dias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
+  gap: 0.5rem;
+}
+
+.opciones-horas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+  gap: 0.5rem;
+}
+
+.opcion-cita {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.opcion-cita input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.opcion-cita:hover {
+  transform: translateY(-2px);
+}
+
+.opcion-cita:has(input:checked) {
+  background: var(--color-secundario);
+  border-color: var(--color-secundario);
+  color: #fff;
+}
+
+.opcion-cita:has(input:focus-visible) {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+.opcion-cita:has(input:disabled) {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.opcion-hora:has(input:disabled) strong {
+  text-decoration: line-through;
+}
+
+.aviso-horario {
+  border-left: 0.3rem solid var(--color-secundario);
+  background: var(--color-fondo);
+  border-radius: var(--radio);
+  padding: 1rem 1.25rem;
+}
