@@ -11,7 +11,7 @@ export const detalleServicios = {
           "Valor: $15.000",
           "De lunes a domingo"
         ],
-        "imagen": "/img/gatopulento.png",
+        "imagen": "/img/servicios-detalle-consulta-01.png",
         "imagenAlt": "Veterinario revisando un perro y un gato"
       },
       {
@@ -23,7 +23,7 @@ export const detalleServicios = {
           "Valor: $18.000",
           "De lunes a domingo"
         ],
-        "imagen": "/img/blog-01.png",
+        "imagen": "/img/servicios-detalle-consulta-02.png",
         "imagenAlt": "Veterinario especialista en animales exóticos"
       },
       {
@@ -35,7 +35,7 @@ export const detalleServicios = {
           "Valor: $25.000 (+$10.000 fuera de horario)",
           "Atención 24/7"
         ],
-        "imagen": "/img/imagenReview-1.jpg",
+        "imagen": "/img/servicios-detalle-consulta-03.png",
         "imagenAlt": "Atención veterinaria de urgencia"
       }
     ]
@@ -52,7 +52,7 @@ export const detalleServicios = {
           "Valor: $18.000",
           "Requiere refuerzo anual"
         ],
-        "imagen": "/img/Nobivac DHPPi.jpg",
+        "imagen": "/img/servicios-detalle-vacuna-01.png",
         "imagenAlt": "Veterinario vacunando a un perro"
       },
       {
@@ -64,7 +64,7 @@ export const detalleServicios = {
           "Valor: $12.000",
           "Obligatoria por ley en Chile"
         ],
-        "imagen": "/img/Nobivac Rabies.jpg",
+        "imagen": "/img/servicios-detalle-vacuna-03.png",
         "imagenAlt": "Certificado de vacuna antirrábica"
       },
       {
@@ -76,7 +76,7 @@ export const detalleServicios = {
           "Valor: $14.000",
           "Previene enfermedades respiratorias"
         ],
-        "imagen": "/img/Felocell CVR.jpg",
+        "imagen": "/img/servicios-detalle-vacuna-06.png",
         "imagenAlt": "Perro sano en el parque"
       },
       {
@@ -88,7 +88,7 @@ export const detalleServicios = {
           "Valor: $17.000",
           "Requiere refuerzo anual"
         ],
-        "imagen": "/img/Felocell CVR.jpg",
+        "imagen": "/img/servicios-detalle-vacuna-02.png",
         "imagenAlt": "Gato siendo examinado en la clínica"
       },
       {
@@ -100,7 +100,7 @@ export const detalleServicios = {
           "Valor: $15.000",
           "Requiere refuerzo anual"
         ],
-        "imagen": "/img/Nobivac Rabies.jpg",
+        "imagen": "/img/servicios-detalle-vacuna-04.png",
         "imagenAlt": "Vacunación felina"
       },
       {
@@ -112,7 +112,7 @@ export const detalleServicios = {
           "Valor: $12.000",
           "Certificación incluida"
         ],
-        "imagen": "/img/Nobivac Rabies.jpg",
+        "imagen": "/img/servicios-detalle-vacuna-05.png",
         "imagenAlt": "Carnet de vacunación felina"
       }
     ]
@@ -129,7 +129,7 @@ export const detalleServicios = {
           "Valor: $80.000",
           "Incluye anestesia y hospitalización 24h"
         ],
-        "imagen": "/img/MELOXICAM.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-01.png",
         "imagenAlt": "Pabellón quirúrgico veterinario"
       },
       {
@@ -141,7 +141,7 @@ export const detalleServicios = {
           "Valor: $60.000",
           "Incluye anestesia segura"
         ],
-        "imagen": "/img/METROBAY.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-02.png",
         "imagenAlt": "Monitoreo durante cirugía veterinaria"
       },
       {
@@ -153,7 +153,7 @@ export const detalleServicios = {
           "Valor: $65.000",
           "Incluye anestesia y hospitalización 12h"
         ],
-        "imagen": "/img/ENROX.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-03.png",
         "imagenAlt": "Gata en recuperación postoperatoria"
       },
       {
@@ -165,7 +165,7 @@ export const detalleServicios = {
           "Valor: $50.000",
           "Incluye anestesia"
         ],
-        "imagen": "/img/MELOXICAM.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-04.png",
         "imagenAlt": "Instrumental quirúrgico veterinario"
       },
       {
@@ -177,7 +177,7 @@ export const detalleServicios = {
           "Valor: $120.000 (Precio referencial; varía según tamaño)",
           "Incluye estabilización de tejido blando"
         ],
-        "imagen": "/img/DONTRALPLUS.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-05.png",
         "imagenAlt": "Veterinario revisando nódulo en la piel"
       },
       {
@@ -189,7 +189,7 @@ export const detalleServicios = {
           "Valor: $180.000",
           "Equipo de urgencias disponible"
         ],
-        "imagen": "/img/METROBAY.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-01.png",
         "imagenAlt": "Recuperación de cachorros tras cesárea"
       }
     ]
@@ -206,7 +206,7 @@ export const detalleServicios = {
           "Valor: $8.000",
           "Procedimiento seguro y rápido"
         ],
-        "imagen": "/img/amoxibay.jpg",
+        "imagen": "/img/servicios-detalle-desparasitacion-01.png",
         "imagenAlt": "Veterinario dando pastilla a perro pequeño"
       },
       {
@@ -218,7 +218,7 @@ export const detalleServicios = {
           "Valor: $9.500",
           "Producto de alta eficacia"
         ],
-        "imagen": "/img/amoxibay.jpg",
+        "imagen": "/img/servicios-detalle-desparasitacion-02.png",
         "imagenAlt": "Perro mediano en la báscula de la clínica"
       },
       {
@@ -230,7 +230,7 @@ export const detalleServicios = {
           "Valor: $11.000",
           "Evita enfermedades zoonóticas"
         ],
-        "imagen": "/img/amoxibay.jpg",
+        "imagen": "/img/servicios-detalle-desparasitacion-03.png",
         "imagenAlt": "Perro grande feliz y sano"
       },
       {
@@ -242,7 +242,7 @@ export const detalleServicios = {
           "Valor: $8.000",
           "Prevención de problemas intestinales"
         ],
-        "imagen": "/img/amoxibay.jpg",
+        "imagen": "/img/servicios-detalle-desparasitacion-04.png",
         "imagenAlt": "Veterinario revisando la boca de un gato"
       },
       {
@@ -254,7 +254,7 @@ export const detalleServicios = {
           "Valor: $7.500",
           "Incluye producto y aplicación"
         ],
-        "imagen": "/img/Clorhexidina shampoo.jpg",
+        "imagen": "/img/servicios-detalle-consulta-01.png",
         "imagenAlt": "Aplicación de pipeta antipulgas"
       }
     ]
@@ -271,7 +271,7 @@ export const detalleServicios = {
           "Valor: $22.000",
           "Resultados disponibles en 24 a 48 hrs"
         ],
-        "imagen": "/img/imagenReview-1.jpg",
+        "imagen": "/img/servicios-detalle-examen-01.png",
         "imagenAlt": "Veterinario revisando muestra de sangre"
       },
       {
@@ -283,7 +283,7 @@ export const detalleServicios = {
           "Valor: $35.000",
           "Resultados disponibles en 24 a 48 hrs"
         ],
-        "imagen": "/img/imagenReview-1.jpg",
+        "imagen": "/img/servicios-detalle-consulta-01.png",
         "imagenAlt": "Tubos de ensayo en laboratorio veterinario"
       },
       {
@@ -295,7 +295,7 @@ export const detalleServicios = {
           "Valor: $28.000",
           "Equipamiento digital de alta resolución"
         ],
-        "imagen": "/img/imagenReview-1.jpg",
+        "imagen": "/img/servicios-detalle-examen-02.png",
         "imagenAlt": "Radiografía digital de un animal en pantalla"
       },
       {
@@ -307,7 +307,7 @@ export const detalleServicios = {
           "Valor: $45.000",
           "Procedimiento seguro y sin dolor"
         ],
-        "imagen": "/img/gatopulento.png",
+        "imagen": "/img/servicios-detalle-examen-03.png",
         "imagenAlt": "Veterinario realizando ecografía abdominal a un perro"
       },
       {
@@ -319,7 +319,7 @@ export const detalleServicios = {
           "Valor: $18.000",
           "Resultado rápido en la misma clínica"
         ],
-        "imagen": "/img/imagenReview-1.jpg",
+        "imagen": "/img/servicios-detalle-ciguria-05.png",
         "imagenAlt": "Kit de test rápido veterinario"
       }
     ]
@@ -336,7 +336,7 @@ export const detalleServicios = {
           "Valor: $5.000",
           "Material esterilizado y técnica indolora"
         ],
-        "imagen": "/img/Clorhexidina shampoo.jpg",
+        "imagen": "/img/servicios-detalle-otros-01.png",
         "imagenAlt": "Corte cuidadoso de uñas a un perro"
       },
       {
@@ -348,7 +348,7 @@ export const detalleServicios = {
           "Valor: $55.000",
           "Requiere evaluación anestésica previa"
         ],
-        "imagen": "/img/Malaseb shampoo.jpg",
+        "imagen": "/img/servicios-detalle-otros-02.png",
         "imagenAlt": "Dientes sanos de un perro tras limpieza"
       },
       {
@@ -360,7 +360,7 @@ export const detalleServicios = {
           "Valor: $15.000",
           "Dispositivo de identificación de por vida"
         ],
-        "imagen": "/img/ProBior.jpg",
+        "imagen": "/img/servicios-detalle-consulta-01.png",
         "imagenAlt": "Lector de microchip escaneando a un gato"
       },
       {
@@ -372,7 +372,7 @@ export const detalleServicios = {
           "Valor: $30.000 (por día)",
           "Incluye monitoreo y alimentación básica"
         ],
-        "imagen": "/img/METROBAY.jpg",
+        "imagen": "/img/servicios-detalle-otros-03.png",
         "imagenAlt": "Gato en jaula de hospitalización veterinaria"
       }
     ]
