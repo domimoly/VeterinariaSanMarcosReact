@@ -48,16 +48,10 @@ Este repositorio es la **migración a React** del sitio estático original (HTML
 | ✉️ | **Contacto** | Formulario con validaciones, último mensaje guardado, mapa y botón "Cómo llegar". |
 | 📰 | **Blog** | Listado de artículos y detalle de cada uno. |
 | 👤 | **Mi perfil** | Datos personales, mascotas, **mis citas** y ficha clínica con vacunas y avisos de vencimiento. |
-| 🛡️ | **Administración** | Vista de usuarios de prueba con búsqueda, filtros y edición de datos guardados en `localStorage`. |
+| 🧑‍⚕️ | **Recepción** | Agenda de todas las citas con filtros, para confirmarlas o reagendarlas, y registro y edición de las fichas clínicas de los pacientes. |
 | 🧭 | **Página 404** | Mensaje claro para direcciones que no existen. |
 
 ---
-
-## 🛡️ Panel de administración
-
-El acceso de demostración utiliza `admin@duoc.cl` y `admin123`. Al iniciar sesión se abre `/admin/usuarios`, donde se pueden consultar, buscar y filtrar usuarios ficticios y editar sus datos. La información se persiste en `localStorage` bajo la clave `usuariosVeterinariaSanMarcos`. La sesión actual se identifica con `usuarioVeterinariaSanMarcos`.
-
-Este control de acceso es solo demostrativo y no reemplaza la autenticación ni los permisos de un backend.
 
 ## 📅 Agendamiento de citas
 
@@ -90,7 +84,7 @@ Al enviar, la solicitud queda en estado **Pendiente**. La clínica debe **confir
 | Estado | Quién lo define |
 |---|---|
 | **Pendiente** | Se asigna al enviar la solicitud. |
-| **Confirmada** / **Reagendada** | La clínica (módulo de recepción, aún no implementado). |
+| **Confirmada** / **Reagendada** | La clínica, desde *Recepción → Agenda de citas*. |
 | **Cancelada** | El dueño, mientras la cita no haya llegado. |
 
 ### Cómo se guarda una cita
@@ -112,7 +106,7 @@ Las citas viven en `localStorage`, en la clave `citasVeterinariaSanMarcos`, como
 | `nota` | `"La clínica propuso este nuevo horario..."` | **Opcional.** Solo la agrega la clínica, y se muestra al dueño. |
 | `creadaEn` | `"2026-10-11T15:00:00.000Z"` | Fecha y hora de creación (ISO). |
 
-**Qué debería hacer el módulo de recepción:**
+**Qué hace el módulo de recepción** (`/recepcion`):
 - **Confirmar:** cambiar `estado` a `"Confirmada"`.
 - **Proponer otro horario:** cambiar `fecha` y `hora` por el nuevo horario, poner `estado` en `"Reagendada"` y explicar el motivo en `nota`.
 - No tocar el resto de los campos, y guardar el arreglo completo en la misma clave.
@@ -136,6 +130,8 @@ Las citas viven en `localStorage`, en la clave `citasVeterinariaSanMarcos`, como
 | `/blog/:slug` | Detalle de un artículo (ej. `/blog/01`) |
 | `/mi-perfil` | Perfil, mascotas, citas y ficha clínica |
 | `/mi-perfil#mis-citas` | Perfil, directo a la sección de citas |
+| `/recepcion` | Recepción: agenda de citas (confirmar y reagendar) |
+| `/recepcion/fichas` | Recepción: fichas clínicas de los pacientes |
 | `*` | Página no encontrada |
 
 ---
@@ -163,9 +159,11 @@ VeterinariaSanMarcosReact/
 │
 ├── src/
 │   ├── components/           → Piezas compartidas (Navegacion, TarjetaServicio, FormularioContacto...)
-│   │   └── Tutor/            → Piezas de las vistas del tutor (PasoFecha, TarjetaCita, HistorialMascota...)
+│   │   ├── Tutor/            → Piezas de las vistas del tutor (PasoMascota, TarjetaCita, HistorialMascota...)
+│   │   └── Recepcionista/    → Piezas de la vista de recepción (TablaCitas, ReagendarCita, FormularioRegistroClinico...)
 │   ├── pages/                → Vistas públicas (Inicio, Servicios, Contacto, Blog...)
-│   │   └── Tutor/            → Vistas del tutor (MiPerfil, AgendarCita) y su hoja de estilos Tutor.css
+│   │   ├── Tutor/            → Vistas del tutor (MiPerfil, AgendarCita) y su hoja de estilos Tutor.css
+│   │   └── Recepcionista/    → Vistas de recepción (AgendaCitas, FichasPacientes) y su hoja Recepcionista.css
 │   ├── data/                 → Datos y configuración compartidos (servicios, blog, citas, clinica...)
 │   │   └── Tutor/            → Datos propios del tutor (usuario, mascotas, regiones)
 │   ├── utils/                → Lógica auxiliar (fechas, horarios y reglas de citas)
@@ -179,7 +177,7 @@ VeterinariaSanMarcosReact/
 └── package.json
 ```
 
-**Organización por roles:** lo que ven todos los usuarios o usan varios roles va en la raíz de cada carpeta; lo exclusivo de un rol va dentro de la carpeta de ese rol (`Tutor`, y las de los demás roles del sistema). Las pruebas viven junto al archivo que prueban (`*.spec.jsx`).
+**Organización por roles:** lo que ven todos los usuarios o usan varios roles va en la raíz de cada carpeta; lo exclusivo de un rol va dentro de la carpeta de ese rol (`Tutor` y `Recepcionista`). Por ejemplo, `PasoFecha` y las insignias de estado las usan ambos roles, así que viven en la raíz y en `App.css`. Las pruebas viven junto al archivo que prueban (`*.spec.jsx`).
 
 **Criterio de organización:** una *página* decide qué mostrar y de dónde saca los datos; un *componente* es una pieza visual que recibe esos datos por props. Los estilos viven en las hojas CSS y los componentes solo usan `className`. La lógica de negocio (disponibilidad de horas, qué servicio corresponde a qué mascota) está en `utils/`, separada de las pantallas.
 
@@ -227,10 +225,11 @@ Mientras no exista el backend, la aplicación usa datos de demostración y guard
 | `usuarioVeterinariaSanMarcos` | Datos personales del perfil |
 | `mascotasVeterinariaSanMarcos` | Mascotas registradas |
 | `citasVeterinariaSanMarcos` | Citas solicitadas, con su estado |
+| `fichasClinicasVeterinariaSanMarcos` | Fichas clínicas que registra recepción (solo se crea al registrar o editar algo) |
 
 > ⚠️ Son datos de prueba. No se guardan contraseñas ni datos reales.
 
-La ficha clínica (vacunas, desparasitaciones y consultas) es de solo lectura, porque la registra el personal de la clínica. Para volver a los datos de demostración, borra estas claves desde las herramientas del navegador (*Application → Local Storage*).
+La ficha clínica (vacunas, desparasitaciones y consultas) la registra el personal de la clínica desde *Recepción*; el dueño solo la consulta desde *Mi perfil*. Para volver a los datos de demostración, borra estas claves desde las herramientas del navegador (*Application → Local Storage*).
 
 Las fechas de las citas y de la ficha clínica de demostración se calculan **relativas a la fecha de hoy**, para que siempre se vean todos los estados (próxima, vencida, al día). Como las citas se guardan en `localStorage` la primera vez que se abre la aplicación, quien ya la haya usado verá las fechas de ese primer día: para refrescarlas, borra la clave `citasVeterinariaSanMarcos`.
 
@@ -242,7 +241,7 @@ Las fechas de las citas y de la ficha clínica de demostración se calculan **re
 - [x] Solicitud y seguimiento de citas desde el lado del dueño
 - [ ] Reemplazar los marcadores de imagen por las fotografías definitivas
 - [ ] Autenticación real y rutas protegidas por rol
-- [ ] Módulo de recepción para confirmar o reagendar citas
+- [x] Módulo de recepción para confirmar o reagendar citas y registrar fichas clínicas
 - [ ] Conexión con el backend de microservicios (Spring Boot + API REST) y disponibilidad real de horas
 
 ---
@@ -252,8 +251,3 @@ Las fechas de las citas y de la ficha clínica de demostración se calculan **re
 - **Desarrollo:** [Tu Nombre / domimoly](https://github.com/domimoly)
 - **Asignatura:** Desarrollo FullStack II — DSY1104 (2026)
 - **Recursos visuales:** imágenes utilizadas estrictamente con fines académicos.
-
-
-### Acceso a administración
-
-La vista `/admin/usuarios` solo se habilita después de iniciar sesión con `admin@duoc.cl` y `admin123`. La autorización de administración se guarda en `sessionStorage` para la pestaña actual; entrar directamente a la ruta redirige al login. Usa **Cerrar sesión** para salir. Esta validación es adecuada para una demostración frontend, pero un sistema real debe validar credenciales y permisos en un backend.
