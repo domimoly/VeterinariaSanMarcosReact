@@ -251,3 +251,11 @@ Las fechas de las citas y de la ficha clínica de demostración se calculan **re
 - **Desarrollo:** [Tu Nombre / domimoly](https://github.com/domimoly)
 - **Asignatura:** Desarrollo FullStack II — DSY1104 (2026)
 - **Recursos visuales:** imágenes utilizadas estrictamente con fines académicos.
+
+## Testing Unitario
+
+Andres
+npm.cmd exec vitest run -- src/pages/tienda.spec.jsx src/pages/Nosotros.spec.jsx src/pages/Carrito.spec.jsx src/components/TarjetaProducto.spec.jsx src/components/ItemCarrito.spec.jsx
+
+Domi
+npm.cmd exec vitest run -- src/utils/citas.spec.jsx src/utils/horarios.spec.jsx src/components/Tutor/PasoConfirmacion.spec.jsx src/components/Tutor/TarjetaCita.spec.jsx src/components/Tutor/HistorialMascota.spec.jsx src/components/Recepcionista/TablaCitas.spec.jsx src/pages/Recepcionista/AgendaCitas.spec.jsx src/components/Recepcionista/ReagendarCita.spec.jsx src/components/Recepcionista/FormularioRegistroClinico.spec.jsx 
