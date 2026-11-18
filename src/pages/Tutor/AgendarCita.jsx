@@ -11,6 +11,7 @@ import { pasosCita } from "../../data/Tutor/pasosCita";
 import { mascotasDemo } from "../../data/Tutor/mascotas";
 import { usuarioDemo } from "../../data/Tutor/usuario";
 import { citasDemo } from "../../data/citas";
+import { leerJSON } from "../../utils/almacenamiento";
 import "./Tutor.css";
 
 const citaInicial = {
@@ -31,22 +32,13 @@ function AgendarCita() {
   const [cita, setCita] = useState(citaInicial);
 
   // Las mascotas son las que el dueño registró en Mi perfil
-  const [mascotas] = useState(() => {
-    const guardado = localStorage.getItem("mascotasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : mascotasDemo;
-  });
+  const [mascotas] = useState(() => leerJSON("mascotasVeterinariaSanMarcos", mascotasDemo));
 
   // Los datos del tutor vienen del perfil
-  const [usuario] = useState(() => {
-    const guardado = localStorage.getItem("usuarioVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : usuarioDemo;
-  });
+  const [usuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
 
   // Citas que el dueño ya solicitó (las guarda el paso de confirmación)
-  const [citasGuardadas, setCitasGuardadas] = useState(() => {
-    const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : citasDemo;
-  });
+  const [citasGuardadas, setCitasGuardadas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
 
   // La solicitud recién enviada (para mostrar el mensaje de éxito)
   const [solicitud, setSolicitud] = useState(null);

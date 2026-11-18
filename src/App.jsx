@@ -16,6 +16,10 @@ import Nosotros from "./pages/Nosotros";
 import Tienda from "./pages/Tienda";
 import Carrito from "./pages/Carrito";
 import NoEncontrada from "./pages/NoEncontrada";
+import SinSesion from "./pages/Errores/SinSesion";
+import SinPermiso from "./pages/Errores/SinPermiso";
+import ErrorServidor from "./pages/Errores/ErrorServidor";
+import LimiteError from "./components/Errores/LimiteError";
 import AgendaCitas from "./pages/Recepcionista/AgendaCitas";
 import FichasPacientes from "./pages/Recepcionista/FichasPacientes";
 
@@ -25,6 +29,7 @@ function App() {
       <Cabecera />
       <Navegacion />
 
+      <LimiteError>
       <Routes>
         <Route path="/" element={<Inicio />} />
         <Route path="/servicios" element={<Servicios />} />
@@ -41,8 +46,12 @@ function App() {
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/recepcion" element={<AgendaCitas />} />
         <Route path="/recepcion/fichas" element={<FichasPacientes />} />
+        <Route path="/sesion-requerida" element={<SinSesion />} />
+        <Route path="/acceso-denegado" element={<SinPermiso />} />
+        <Route path="/error" element={<ErrorServidor />} />
         <Route path="*" element={<NoEncontrada />} />
       </Routes>
+      </LimiteError>
 
       <PiePagina />
     </>

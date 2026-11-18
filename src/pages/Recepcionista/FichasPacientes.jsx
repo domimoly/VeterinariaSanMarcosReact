@@ -6,6 +6,7 @@ import MenuRecepcion from "../../components/Recepcionista/MenuRecepcion";
 import { fichasClinicas } from "../../data/fichasClinicas";
 import { mascotasDemo } from "../../data/Tutor/mascotas";
 import { usuarioDemo } from "../../data/Tutor/usuario";
+import { leerJSON } from "../../utils/almacenamiento";
 import "./Recepcionista.css";
 
 const secciones = [
@@ -18,18 +19,9 @@ const fichaVacia = { vacunas: [], desparasitaciones: [], consultas: [] };
 
 function FichasPacientes() {
   // Los pacientes son las mascotas registradas; el tutor es el usuario de la cuenta
-  const [mascotas] = useState(() => {
-    const guardado = localStorage.getItem("mascotasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : mascotasDemo;
-  });
-  const [tutor] = useState(() => {
-    const guardado = localStorage.getItem("usuarioVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : usuarioDemo;
-  });
-  const [fichas, setFichas] = useState(() => {
-    const guardado = localStorage.getItem("fichasClinicasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : fichasClinicas;
-  });
+  const [mascotas] = useState(() => leerJSON("mascotasVeterinariaSanMarcos", mascotasDemo));
+  const [tutor] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
+  const [fichas, setFichas] = useState(() => leerJSON("fichasClinicasVeterinariaSanMarcos", fichasClinicas));
 
   const [pacienteId, setPacienteId] = useState("");
   const [edicion, setEdicion] = useState(null); // { tipo, registro } mientras hay un formulario abierto

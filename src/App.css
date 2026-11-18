@@ -449,3 +449,15 @@
   border-radius: var(--radio);
   padding: 1rem 1.25rem;
 }
+/* Páginas de error (404, 403, 401, 500) */
+.pagina-error {
+  min-height: 55vh;
+}
+
+.pagina-error-codigo {
+  font-size: clamp(4rem, 15vw, 7rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  color: var(--color-secundario);
+}

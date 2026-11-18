@@ -5,16 +5,14 @@ import ReagendarCita from "../../components/Recepcionista/ReagendarCita";
 import TablaCitas from "../../components/Recepcionista/TablaCitas";
 import { citasDemo } from "../../data/citas";
 import { citaEsProxima, fechaHoraDeCita } from "../../utils/citas";
+import { leerJSON } from "../../utils/almacenamiento";
 import "./Recepcionista.css";
 
 const filtrosIniciales = { estado: "", fecha: "" };
 
 function AgendaCitas() {
   // Son las mismas citas que solicita el tutor (clave citasVeterinariaSanMarcos)
-  const [citas, setCitas] = useState(() => {
-    const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : citasDemo;
-  });
+  const [citas, setCitas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
   const [filtros, setFiltros] = useState(filtrosIniciales);
   const [citaAReagendar, setCitaAReagendar] = useState(null);
 

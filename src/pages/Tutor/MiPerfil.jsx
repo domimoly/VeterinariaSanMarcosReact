@@ -11,23 +11,15 @@ import { usuarioDemo } from "../../data/Tutor/usuario";
 import { mascotasDemo } from "../../data/Tutor/mascotas";
 import { fichasClinicas } from "../../data/fichasClinicas";
 import { citasDemo } from "../../data/citas";
+import { leerJSON } from "../../utils/almacenamiento";
 import "./Tutor.css";
 
 function MiPerfil() {
-  const [usuario, setUsuario] = useState(() => {
-    const guardado = localStorage.getItem("usuarioVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : usuarioDemo;
-  });
+  const [usuario, setUsuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
 
-  const [mascotas, setMascotas] = useState(() => {
-    const guardado = localStorage.getItem("mascotasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : mascotasDemo;
-  });
+  const [mascotas, setMascotas] = useState(() => leerJSON("mascotasVeterinariaSanMarcos", mascotasDemo));
 
-  const [citas, setCitas] = useState(() => {
-    const guardado = localStorage.getItem("citasVeterinariaSanMarcos");
-    return guardado ? JSON.parse(guardado) : citasDemo;
-  });
+  const [citas, setCitas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
 
   const { hash } = useLocation();
 
