@@ -16,6 +16,7 @@ export default defineConfig({
       include: [
         'src/utils/**/*.js',
         'src/services/**/*.js',
+        'src/hooks/**/*.js',
         'src/components/{RutaProtegida,Navegacion}.jsx',
         'src/components/Errores/**/*.jsx',
         'src/pages/{Login,Registro,NoEncontrada}.jsx',
@@ -24,7 +25,6 @@ export default defineConfig({
         'src/components/Tutor/**/*.jsx',
         'src/pages/Recepcionista/**/*.jsx',
         'src/components/Recepcionista/**/*.jsx',
-        'src/components/PasoFecha.jsx',
         'src/pages/{Inicio,Servicios,DetalleServicio,Contacto,Blog,DetalleBlog}.jsx',
         'src/components/{TarjetaServicio,TarjetaDetalleServicio,TarjetaBlog,FormularioContacto}.jsx',
         'src/pages/{Tienda,Carrito,Nosotros}.jsx',

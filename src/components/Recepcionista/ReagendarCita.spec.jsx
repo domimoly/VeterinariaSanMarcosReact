@@ -1,14 +1,20 @@
 // Pruebas de la vista de Recepcionista
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
+import * as citaService from "../../services/citaService";
+import { esperarHoras, instalarCitasEnMemoria } from "../../test/citasEnMemoria";
 import ReagendarCita from "./ReagendarCita";
+
+vi.mock("../../services/citaService");
 
 const cita = {
   id: 1,
   codigo: "SM-000001",
   mascotaId: 1,
   mascotaNombre: "Max",
+  servicioId: "consulta-general",
   servicioNombre: "Consulta General",
   duracion: "30 min",
   duracionMin: 30,
@@ -21,11 +27,18 @@ const cita = {
 const primeroHabilitado = (nombre) =>
   screen.getAllByRole("radio").filter((radio) => radio.name === nombre && !radio.disabled)[0].closest("label");
 
-const mostrar = (props = {}) =>
-  render(<ReagendarCita cita={cita} citasGuardadas={[cita]} onGuardar={vi.fn()} onCancelar={vi.fn()} {...props} />);
+const mostrar = async (props = {}) => {
+  render(
+    <MemoryRouter>
+      <ReagendarCita cita={cita} citasGuardadas={[cita]} onGuardar={vi.fn()} onCancelar={vi.fn()} {...props} />
+    </MemoryRouter>
+  );
+  await esperarHoras();
+};
 
 const elegirHorario = async (usuario) => {
   await usuario.selectOptions(screen.getByLabelText("Semana"), "1");
+  await esperarHoras();
   await usuario.click(primeroHabilitado("fecha"));
   await usuario.click(primeroHabilitado("hora"));
   await usuario.click(screen.getByRole("button", { name: "Siguiente" }));
@@ -33,13 +46,14 @@ const elegirHorario = async (usuario) => {
 
 describe("ReagendarCita", () => {
   beforeEach(() => {
+    instalarCitasEnMemoria(citaService);
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-05T08:00:00"));
   });
   afterEach(() => vi.useRealTimers());
 
-  it("empieza pidiendo el nuevo horario de la cita indicada", () => {
-    mostrar();
+  it("empieza pidiendo el nuevo horario de la cita indicada", async () => {
+    await mostrar();
 
     expect(screen.getByRole("heading", { name: "Reagendar cita SM-000001" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Elige el nuevo horario" })).toBeInTheDocument();
@@ -47,7 +61,7 @@ describe("ReagendarCita", () => {
 
   it("no avanza sin elegir un día y una hora", async () => {
     const usuario = userEvent.setup();
-    mostrar();
+    await mostrar();
 
     await usuario.click(screen.getByRole("button", { name: "Siguiente" }));
 
@@ -57,7 +71,7 @@ describe("ReagendarCita", () => {
   it("exige explicar el motivo del cambio", async () => {
     const usuario = userEvent.setup();
     const onGuardar = vi.fn();
-    mostrar({ onGuardar });
+    await mostrar({ onGuardar });
 
     await elegirHorario(usuario);
     await usuario.click(screen.getByRole("button", { name: "Reagendar cita" }));
@@ -68,7 +82,7 @@ describe("ReagendarCita", () => {
 
   it("rechaza un motivo demasiado corto", async () => {
     const usuario = userEvent.setup();
-    mostrar();
+    await mostrar();
 
     await elegirHorario(usuario);
     await usuario.type(screen.getByLabelText(/Motivo del cambio/), "No");
@@ -80,7 +94,7 @@ describe("ReagendarCita", () => {
   it("entrega el nuevo horario y el motivo cuando todo es válido", async () => {
     const usuario = userEvent.setup();
     const onGuardar = vi.fn();
-    mostrar({ onGuardar });
+    await mostrar({ onGuardar });
 
     await elegirHorario(usuario);
     await usuario.type(screen.getByLabelText(/Motivo del cambio/), "El médico no estará ese día");
@@ -95,7 +109,7 @@ describe("ReagendarCita", () => {
 
   it("permite volver a elegir el horario desde el paso del motivo", async () => {
     const usuario = userEvent.setup();
-    mostrar();
+    await mostrar();
 
     await elegirHorario(usuario);
     await usuario.click(screen.getByRole("button", { name: "Volver" }));
@@ -105,9 +119,10 @@ describe("ReagendarCita", () => {
 
   it("permite mover la cita dentro de su propio día, porque no se bloquea a sí misma", async () => {
     const usuario = userEvent.setup();
-    mostrar();
+    await mostrar();
 
     await usuario.selectOptions(screen.getByLabelText("Semana"), "1");
+    await esperarHoras();
     const mismoDia = screen.getAllByRole("radio").find((radio) => radio.name === "fecha" && radio.value === cita.fecha);
     await usuario.click(mismoDia.closest("label"));
     await usuario.click(primeroHabilitado("hora"));
@@ -119,10 +134,26 @@ describe("ReagendarCita", () => {
   it("avisa cuando se cancela", async () => {
     const usuario = userEvent.setup();
     const onCancelar = vi.fn();
-    mostrar({ onCancelar });
+    await mostrar({ onCancelar });
 
     await usuario.click(screen.getByRole("button", { name: "Cancelar" }));
 
     expect(onCancelar).toHaveBeenCalled();
+  });
+
+  it("consulta la disponibilidad del servicio de la cita que se mueve", async () => {
+    await mostrar();
+
+    expect(citaService.horasLibres).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/), "consulta-general");
+  });
+
+  it("muestra el error de ms-citas en el paso del motivo y bloquea el botón mientras guarda", async () => {
+    const usuario = userEvent.setup();
+    await mostrar({ error: "No quedan cupos a las 10:00", guardando: true });
+
+    await elegirHorario(usuario);
+
+    expect(screen.getByRole("alert")).toHaveTextContent("No quedan cupos a las 10:00");
+    expect(screen.getByRole("button", { name: "Guardando..." })).toBeDisabled();
   });
 });

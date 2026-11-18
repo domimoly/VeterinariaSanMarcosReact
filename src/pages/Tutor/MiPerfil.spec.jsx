@@ -2,11 +2,14 @@ import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { vi } from "vitest";
+import * as citaService from "../../services/citaService";
 import * as mascotaService from "../../services/mascotaService";
+import { instalarCitasEnMemoria } from "../../test/citasEnMemoria";
 import { instalarMascotasEnMemoria } from "../../test/mascotasEnMemoria";
 import MiPerfil from "./MiPerfil";
 
 vi.mock("../../services/mascotaService");
+vi.mock("../../services/citaService");
 
 const abrir = async (ruta = "/mi-perfil") => {
   render(
@@ -14,14 +17,16 @@ const abrir = async (ruta = "/mi-perfil") => {
       <MiPerfil />
     </MemoryRouter>
   );
-  // Espera a que terminen de cargar las mascotas (vienen de ms-mascotas)
+  // Espera a que terminen de cargar las mascotas (ms-mascotas) y las citas (ms-citas)
   await waitFor(() => expect(screen.queryByText("Cargando tus mascotas...")).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText("Cargando tus citas...")).not.toBeInTheDocument());
 };
 
 describe("MiPerfil", () => {
   beforeEach(() => {
     localStorage.clear();
     instalarMascotasEnMemoria(mascotaService);
+    instalarCitasEnMemoria(citaService);
     Element.prototype.scrollIntoView = vi.fn(); // jsdom no la implementa
   });
   afterEach(() => vi.restoreAllMocks());
@@ -80,7 +85,7 @@ describe("MiPerfil", () => {
     expect(confirmar).toHaveBeenCalledTimes(2);
   });
 
-  it("cancela una cita y la guarda como Cancelada", async () => {
+  it("cancela una cita en ms-citas y la pasa al historial como Cancelada", async () => {
     const usuario = userEvent.setup();
     vi.spyOn(window, "confirm").mockReturnValue(true);
     await abrir();
@@ -90,12 +95,23 @@ describe("MiPerfil", () => {
 
     // La cita pasa de "Próximas" a "Historial": se vuelve a buscar la tarjeta
     expect(within(tarjeta()).getByText("Cancelada")).toBeInTheDocument();
-    const guardadas = JSON.parse(localStorage.getItem("citasVeterinariaSanMarcos"));
-    expect(guardadas.find((cita) => cita.id === 1).estado).toBe("Cancelada");
+    expect(citaService.cancelarCita).toHaveBeenCalledWith(1);
+  });
+
+  it("no cancela la cita si el tutor no confirma", async () => {
+    const usuario = userEvent.setup();
+    vi.spyOn(window, "confirm").mockReturnValue(false);
+    await abrir();
+
+    await usuario.click(
+      within(screen.getByText("Código SM-100001").closest(".tarjeta-cita")).getByRole("button", { name: "Cancelar cita" })
+    );
+
+    expect(citaService.cancelarCita).not.toHaveBeenCalled();
   });
 
   it("invita a agendar cuando no hay citas", async () => {
-    localStorage.setItem("citasVeterinariaSanMarcos", "[]");
+    instalarCitasEnMemoria(citaService, []);
     await abrir();
 
     expect(screen.getByText("Aún no has solicitado citas.")).toBeInTheDocument();
@@ -119,6 +135,7 @@ describe("MiPerfil: errores del servicio de mascotas", () => {
     localStorage.clear();
     Element.prototype.scrollIntoView = vi.fn();
     instalarMascotasEnMemoria(mascotaService);
+    instalarCitasEnMemoria(citaService);
   });
   afterEach(() => vi.restoreAllMocks());
 
@@ -162,6 +179,58 @@ describe("MiPerfil: errores del servicio de mascotas", () => {
         </Routes>
       </MemoryRouter>
     );
+
+    expect(await screen.findByText("Sesión requerida")).toBeInTheDocument();
+  });
+});
+
+describe("MiPerfil: errores del servicio de citas", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    Element.prototype.scrollIntoView = vi.fn();
+    instalarMascotasEnMemoria(mascotaService);
+    instalarCitasEnMemoria(citaService);
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  const mostrar = () =>
+    render(
+      <MemoryRouter initialEntries={["/mi-perfil"]}>
+        <Routes>
+          <Route path="/mi-perfil" element={<MiPerfil />} />
+          <Route path="/sesion-requerida" element={<p>Sesión requerida</p>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+  it("muestra el error de carga de las citas y permite reintentar", async () => {
+    const usuario = userEvent.setup();
+    citaService.listarCitas.mockRejectedValueOnce(new Error("No se pudo conectar con el servidor."));
+    mostrar();
+
+    const seccion = (await screen.findByRole("heading", { name: "Mis citas" })).closest("section");
+    expect(await within(seccion).findByText(/No se pudo conectar con el servidor/)).toBeInTheDocument();
+
+    await usuario.click(within(seccion).getByRole("button", { name: "Reintentar" }));
+    expect(await screen.findByText("Código SM-100001")).toBeInTheDocument();
+  });
+
+  it("si falla al cancelar, muestra el motivo y la cita sigue vigente", async () => {
+    const usuario = userEvent.setup();
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    citaService.cancelarCita.mockRejectedValueOnce(new Error("No se puede cancelar una cita que ya comenzó"));
+    mostrar();
+
+    const tarjeta = (await screen.findByText("Código SM-100001")).closest(".tarjeta-cita");
+    await usuario.click(within(tarjeta).getByRole("button", { name: "Cancelar cita" }));
+
+    expect(await screen.findByText("No se puede cancelar una cita que ya comenzó")).toBeInTheDocument();
+    expect(within(screen.getByText("Código SM-100001").closest(".tarjeta-cita")).queryByText("Cancelada")).not.toBeInTheDocument();
+  });
+
+  it("si la sesión venció al cargar las citas, lleva a la página de sesión requerida", async () => {
+    citaService.listarCitas.mockRejectedValueOnce(Object.assign(new Error("Tu sesión venció"), { estado: 401 }));
+    mostrar();
 
     expect(await screen.findByText("Sesión requerida")).toBeInTheDocument();
   });

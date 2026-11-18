@@ -9,7 +9,7 @@ import HistorialMascota from "../../components/Tutor/HistorialMascota";
 import ListaCitas from "../../components/Tutor/ListaCitas";
 import { usuarioDemo } from "../../data/Tutor/usuario";
 import { fichasClinicas } from "../../data/fichasClinicas";
-import { citasDemo } from "../../data/citas";
+import { useCitas } from "../../hooks/useCitas";
 import { useMascotas } from "../../hooks/useMascotas";
 import { leerJSON } from "../../utils/almacenamiento";
 import "./Tutor.css";
@@ -18,9 +18,28 @@ function MiPerfil() {
   const [usuario, setUsuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
 
   // Las mascotas viven en ms-mascotas (base de datos), no en el navegador
-  const { mascotas, cargando, error, errorAccion, sesionVencida, recargar, crear, actualizar, eliminar } = useMascotas();
+  const {
+    mascotas,
+    cargando,
+    error,
+    errorAccion,
+    sesionVencida: mascotasSinSesion,
+    recargar,
+    crear,
+    actualizar,
+    eliminar,
+  } = useMascotas();
 
-  const [citas, setCitas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
+  // Las citas viven en ms-citas: el tutor recibe solo las suyas
+  const {
+    citas,
+    cargando: cargandoCitas,
+    error: errorCitas,
+    errorAccion: errorAccionCitas,
+    sesionVencida: citasSinSesion,
+    recargar: recargarCitas,
+    cancelar,
+  } = useCitas();
 
   const { hash } = useLocation();
 
@@ -30,10 +49,6 @@ function MiPerfil() {
   useEffect(() => {
     localStorage.setItem("usuarioVeterinariaSanMarcos", JSON.stringify(usuario));
   }, [usuario]);
-
-  useEffect(() => {
-    localStorage.setItem("citasVeterinariaSanMarcos", JSON.stringify(citas));
-  }, [citas]);
 
   // Permite llegar directo a una sección con /mi-perfil#mis-citas
   useEffect(() => {
@@ -64,9 +79,9 @@ function MiPerfil() {
     if (guardada) cerrarFormulario();
   }
 
-  function cancelarCita(id) {
+  async function cancelarCita(id) {
     if (window.confirm("¿Seguro que quieres cancelar esta cita?")) {
-      setCitas(citas.map((cita) => (cita.id === id ? { ...cita, estado: "Cancelada" } : cita)));
+      await cancelar(id);
     }
   }
 
@@ -77,7 +92,7 @@ function MiPerfil() {
   }
 
   // El token venció mientras se usaba la página
-  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
+  if (mascotasSinSesion || citasSinSesion) return <Navigate to="/sesion-requerida" replace />;
 
   return (
     <main className="container py-4">
@@ -163,7 +178,27 @@ function MiPerfil() {
             Agendar cita
           </Link>
         </div>
-        <ListaCitas citas={citas} onCancelar={cancelarCita} />
+
+        {errorAccionCitas && (
+          <Alert variant="danger" role="alert">
+            {errorAccionCitas}
+          </Alert>
+        )}
+
+        {cargandoCitas ? (
+          <p className="text-secondary mb-0" role="status">
+            Cargando tus citas...
+          </p>
+        ) : errorCitas ? (
+          <Alert variant="danger" role="alert" className="mb-0">
+            {errorCitas}{" "}
+            <Alert.Link as="button" type="button" onClick={recargarCitas}>
+              Reintentar
+            </Alert.Link>
+          </Alert>
+        ) : (
+          <ListaCitas citas={citas} onCancelar={cancelarCita} />
+        )}
       </section>
 
       <section className="perfil-caja mt-4">

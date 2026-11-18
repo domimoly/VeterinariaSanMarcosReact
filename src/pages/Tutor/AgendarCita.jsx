@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import { Navigate, useSearchParams } from "react-router-dom";
 import PasosCita from "../../components/Tutor/PasosCita";
@@ -10,7 +10,7 @@ import PasoConfirmacion from "../../components/Tutor/PasoConfirmacion";
 import CitaSolicitada from "../../components/Tutor/CitaSolicitada";
 import { pasosCita } from "../../data/Tutor/pasosCita";
 import { usuarioDemo } from "../../data/Tutor/usuario";
-import { citasDemo } from "../../data/citas";
+import { useCitas } from "../../hooks/useCitas";
 import { useMascotas } from "../../hooks/useMascotas";
 import { leerJSON } from "../../utils/almacenamiento";
 import "./Tutor.css";
@@ -33,20 +33,17 @@ function AgendarCita() {
   const [cita, setCita] = useState(citaInicial);
 
   // Las mascotas son las que el dueño registró en Mi perfil (vienen de ms-mascotas)
-  const { mascotas, cargando, error, sesionVencida, recargar } = useMascotas();
+  const { mascotas, cargando, error, sesionVencida: mascotasSinSesion, recargar } = useMascotas();
 
   // Los datos del tutor vienen del perfil
   const [usuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
 
-  // Citas que el dueño ya solicitó (las guarda el paso de confirmación)
-  const [citasGuardadas, setCitasGuardadas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
+  // Citas que el dueño ya solicitó (vienen de ms-citas; sirven para avisar si su mascota ya tiene hora ese día)
+  const { citas: citasGuardadas, crear, errorAccion, limpiarError, sesionVencida: citasSinSesion } = useCitas();
 
   // La solicitud recién enviada (para mostrar el mensaje de éxito)
   const [solicitud, setSolicitud] = useState(null);
-
-  useEffect(() => {
-    localStorage.setItem("citasVeterinariaSanMarcos", JSON.stringify(citasGuardadas));
-  }, [citasGuardadas]);
+  const [enviando, setEnviando] = useState(false);
 
   function continuarMascota(datos) {
     // Si cambió el servicio o la mascota, la hora elegida antes puede ya no servir
@@ -66,9 +63,17 @@ function AgendarCita() {
     setPaso(4);
   }
 
-  function confirmarCita(nuevaSolicitud) {
-    setCitasGuardadas([...citasGuardadas, nuevaSolicitud]);
-    setSolicitud(nuevaSolicitud);
+  async function confirmarCita() {
+    setEnviando(true);
+    const creada = await crear(cita);
+    setEnviando(false);
+    if (creada) setSolicitud(creada);
+  }
+
+  // Al volver a los pasos anteriores se descarta el aviso de un envío fallido
+  function volverAPaso(numero) {
+    limpiarError();
+    setPaso(numero);
   }
 
   function agendarOtra() {
@@ -78,7 +83,7 @@ function AgendarCita() {
   }
 
   // El token venció mientras se usaba la página
-  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
+  if (mascotasSinSesion || citasSinSesion) return <Navigate to="/sesion-requerida" replace />;
 
   if (solicitud) {
     return (
@@ -145,10 +150,11 @@ function AgendarCita() {
             {paso === 4 && (
               <PasoConfirmacion
                 cita={cita}
-                citasGuardadas={citasGuardadas}
+                enviando={enviando}
+                error={errorAccion}
                 onConfirmar={confirmarCita}
-                onAtras={() => setPaso(3)}
-                onCambiarHora={() => setPaso(2)}
+                onAtras={() => volverAPaso(3)}
+                onCambiarHora={() => volverAPaso(2)}
               />
             )}
           </section>

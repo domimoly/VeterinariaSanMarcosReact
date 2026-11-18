@@ -1,42 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Alert } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
 import FiltrosCitas from "../../components/Recepcionista/FiltrosCitas";
 import MenuRecepcion from "../../components/Recepcionista/MenuRecepcion";
 import ReagendarCita from "../../components/Recepcionista/ReagendarCita";
 import TablaCitas from "../../components/Recepcionista/TablaCitas";
-import { citasDemo } from "../../data/citas";
+import { useCitas } from "../../hooks/useCitas";
 import { citaEsProxima, fechaHoraDeCita } from "../../utils/citas";
-import { leerJSON } from "../../utils/almacenamiento";
 import "./Recepcionista.css";
 
 const filtrosIniciales = { estado: "", fecha: "" };
 
 function AgendaCitas() {
-  // Son las mismas citas que solicita el tutor (clave citasVeterinariaSanMarcos)
-  const [citas, setCitas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
+  // La recepción recibe de ms-citas la agenda completa (las citas de todos los tutores)
+  const { citas, cargando, error, errorAccion, sesionVencida, recargar, limpiarError, confirmar, reagendar } =
+    useCitas();
   const [filtros, setFiltros] = useState(filtrosIniciales);
   const [citaAReagendar, setCitaAReagendar] = useState(null);
-
-  useEffect(() => {
-    localStorage.setItem("citasVeterinariaSanMarcos", JSON.stringify(citas));
-  }, [citas]);
+  const [guardando, setGuardando] = useState(false);
 
   function cambiarFiltro(evento) {
     const { name, value } = evento.target;
     setFiltros({ ...filtros, [name]: value });
   }
 
-  function confirmar(id) {
-    setCitas(citas.map((cita) => (cita.id === id ? { ...cita, estado: "Confirmada" } : cita)));
+  function abrirReagendar(cita) {
+    limpiarError();
+    setCitaAReagendar(cita);
   }
 
-  function guardarReagendamiento({ fecha, hora, nota }) {
-    setCitas(
-      citas.map((cita) =>
-        cita.id === citaAReagendar.id ? { ...cita, fecha, hora, nota, estado: "Reagendada" } : cita
-      )
-    );
-    setCitaAReagendar(null);
+  async function guardarReagendamiento(datos) {
+    setGuardando(true);
+    const cita = await reagendar(citaAReagendar.id, datos);
+    setGuardando(false);
+    if (cita) setCitaAReagendar(null);
   }
+
+  // El token venció mientras se usaba la página
+  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
 
   const ahora = new Date();
   const filtradas = citas.filter(
@@ -72,13 +73,34 @@ function AgendaCitas() {
 
         <FiltrosCitas filtros={filtros} onCambiar={cambiarFiltro} onLimpiar={() => setFiltros(filtrosIniciales)} />
 
-        <TablaCitas citas={[...proximas, ...anteriores]} onConfirmar={confirmar} onReagendar={setCitaAReagendar} />
+        {errorAccion && !citaAReagendar && (
+          <Alert variant="danger" role="alert">
+            {errorAccion}
+          </Alert>
+        )}
+
+        {cargando ? (
+          <p className="text-secondary mb-0" role="status">
+            Cargando la agenda...
+          </p>
+        ) : error ? (
+          <Alert variant="danger" role="alert" className="mb-0">
+            {error}{" "}
+            <Alert.Link as="button" type="button" onClick={recargar}>
+              Reintentar
+            </Alert.Link>
+          </Alert>
+        ) : (
+          <TablaCitas citas={[...proximas, ...anteriores]} onConfirmar={confirmar} onReagendar={abrirReagendar} />
+        )}
       </section>
 
       {citaAReagendar && (
         <ReagendarCita
           cita={citaAReagendar}
           citasGuardadas={citas}
+          guardando={guardando}
+          error={errorAccion}
           onGuardar={guardarReagendamiento}
           onCancelar={() => setCitaAReagendar(null)}
         />

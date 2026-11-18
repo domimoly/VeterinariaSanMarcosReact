@@ -1,7 +1,7 @@
 import { agendamiento, horarioAtencion } from "../data/clinica";
 import { fechaIsoLocal } from "./fechas";
 
-const { bloqueMin, cuposPorBloque, semanasMaximas, anticipacionMin } = agendamiento;
+const { bloqueMin, semanasMaximas } = agendamiento;
 const NOMBRES_DIA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 function aMinutos(hora) {
@@ -54,57 +54,25 @@ export function etiquetaDia(fechaIso) {
   return { nombre: NOMBRES_DIA[fecha.getDay()], fechaCorta: `${dia}/${mes}` };
 }
 
-// Cupos ya tomados en un bloque. Sin backend: una parte se simula de forma fija
-// según el día y la hora, y otra viene de las citas que el usuario ya guardó.
-function cuposOcupados(fechaIso, inicioMin, citasGuardadas) {
-  const dia = Number(fechaIso.slice(8, 10));
-  const semilla = (dia * 5 + (inicioMin / bloqueMin) * 3) % 11;
-  let simulados = 0;
-  if (semilla >= 9) simulados = cuposPorBloque;
-  else if (semilla >= 7) simulados = 2;
-  else if (semilla >= 5) simulados = 1;
-
-  const reales = citasGuardadas.filter((cita) => {
-    if (cita.fecha !== fechaIso || cita.estado === "Cancelada") return false;
-    const desde = aMinutos(cita.hora);
-    return inicioMin >= desde && inicioMin < desde + bloquesNecesarios(cita.duracionMin) * bloqueMin;
-  }).length;
-
-  return simulados + reales;
-}
-
-function estaDisponible(fechaIso, inicioMin, duracionMin, citasGuardadas, ahora) {
-  const inicio = fechaDesdeIso(fechaIso);
-  inicio.setMinutes(inicioMin);
-  if (inicio - ahora < anticipacionMin * 60000) return false;
-
-  for (let bloque = 0; bloque < bloquesNecesarios(duracionMin); bloque++) {
-    if (cuposOcupados(fechaIso, inicioMin + bloque * bloqueMin, citasGuardadas) >= cuposPorBloque) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Horas de inicio posibles de un día: el servicio debe terminar antes del cierre de su tramo
-export function horasDelDia(fechaIso, duracionMin, citasGuardadas, ahora = new Date()) {
+// Horas de inicio posibles de un día: el servicio debe terminar antes del cierre de su tramo.
+// "libres" son las horas con cupo que informa ms-citas; las demás se muestran tachadas.
+export function horasDelDia(fechaIso, duracionMin, libres = []) {
   const tramos = horarioAtencion[fechaDesdeIso(fechaIso).getDay()];
   const largo = bloquesNecesarios(duracionMin) * bloqueMin;
   const horas = [];
 
   tramos.forEach(([desde, hasta]) => {
     for (let inicio = aMinutos(desde); inicio + largo <= aMinutos(hasta); inicio += bloqueMin) {
-      horas.push({
-        hora: aHora(inicio),
-        disponible: estaDisponible(fechaIso, inicio, duracionMin, citasGuardadas, ahora),
-      });
+      const hora = aHora(inicio);
+      horas.push({ hora, disponible: libres.includes(hora) });
     }
   });
   return horas;
 }
 
-// Devuelve un objeto con los errores de fecha y hora ({} si todo está bien)
-export function validarHorario({ fecha, hora, duracionMin, citasGuardadas, mascotaId, ahora = new Date() }) {
+// Devuelve un objeto con los errores de fecha y hora ({} si todo está bien).
+// El cupo real lo valida ms-citas; aquí se revisa lo que se puede saber antes de enviar.
+export function validarHorario({ fecha, hora, libres, citasGuardadas, mascotaId, ahora = new Date() }) {
   const errores = {};
 
   if (!fecha) {
@@ -123,9 +91,8 @@ export function validarHorario({ fecha, hora, duracionMin, citasGuardadas, masco
 
   if (!hora) {
     errores.hora = "Selecciona una hora";
-  } else if (!errores.fecha) {
-    const opcion = horasDelDia(fecha, duracionMin, citasGuardadas, ahora).find((h) => h.hora === hora);
-    if (!opcion || !opcion.disponible) errores.hora = "Esa hora ya no está disponible, elige otra";
+  } else if (!errores.fecha && !libres.includes(hora)) {
+    errores.hora = "Esa hora ya no está disponible, elige otra";
   }
 
   return errores;

@@ -20,7 +20,6 @@ const mostrar = (props = {}) =>
   render(
     <PasoConfirmacion
       cita={cita}
-      citasGuardadas={[]}
       onConfirmar={vi.fn()}
       onAtras={vi.fn()}
       onCambiarHora={vi.fn()}
@@ -29,12 +28,6 @@ const mostrar = (props = {}) =>
   );
 
 describe("PasoConfirmacion", () => {
-  beforeEach(() => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-10-05T08:00:00"));
-  });
-  afterEach(() => vi.useRealTimers());
-
   it("resume la solicitud, incluidos los antecedentes y el medio de recordatorio", () => {
     mostrar();
 
@@ -54,7 +47,7 @@ describe("PasoConfirmacion", () => {
     expect(onConfirmar).not.toHaveBeenCalled();
   });
 
-  it("envía la solicitud en estado Pendiente con un código", async () => {
+  it("envía la solicitud cuando el tutor confirma los datos", async () => {
     const usuario = userEvent.setup();
     const onConfirmar = vi.fn();
     mostrar({ onConfirmar });
@@ -62,31 +55,25 @@ describe("PasoConfirmacion", () => {
     await usuario.click(screen.getByLabelText(/Confirmo que los datos/));
     await usuario.click(screen.getByRole("button", { name: "Solicitar cita" }));
 
-    expect(onConfirmar).toHaveBeenCalledWith(
-      expect.objectContaining({
-        estado: "Pendiente",
-        mascotaNombre: "Max",
-        servicioNombre: "Consulta General",
-        codigo: expect.stringMatching(/^SM-\d{6}$/),
-      })
-    );
+    expect(onConfirmar).toHaveBeenCalledTimes(1);
   });
 
-  it("no envía y ofrece elegir otra hora si la mascota ya tiene una cita ese día", async () => {
+  it("muestra el motivo si ms-citas rechazó la hora y ofrece elegir otra", async () => {
     const usuario = userEvent.setup();
-    const onConfirmar = vi.fn();
     const onCambiarHora = vi.fn();
-    const existente = { mascotaId: 1, fecha: "2026-10-12", hora: "15:00", duracionMin: 30, estado: "Pendiente" };
-    mostrar({ onConfirmar, onCambiarHora, citasGuardadas: [existente] });
-
-    await usuario.click(screen.getByLabelText(/Confirmo que los datos/));
-    await usuario.click(screen.getByRole("button", { name: "Solicitar cita" }));
+    mostrar({ onCambiarHora, error: "La mascota ya tiene una cita ese día" });
 
     expect(screen.getByText("No pudimos reservar tu hora.")).toBeInTheDocument();
-    expect(onConfirmar).not.toHaveBeenCalled();
+    expect(screen.getByText(/La mascota ya tiene una cita ese día/)).toBeInTheDocument();
 
     await usuario.click(screen.getByRole("button", { name: "Elegir otra hora" }));
     expect(onCambiarHora).toHaveBeenCalled();
+  });
+
+  it("desactiva el botón mientras se envía para no duplicar la solicitud", () => {
+    mostrar({ enviando: true });
+
+    expect(screen.getByRole("button", { name: "Enviando..." })).toBeDisabled();
   });
 
   it("permite volver al paso anterior", async () => {

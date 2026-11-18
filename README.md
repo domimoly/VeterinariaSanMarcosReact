@@ -89,7 +89,7 @@ Al enviar, la solicitud queda en estado **Pendiente**. La clínica debe **confir
 
 ### Cómo se guarda una cita
 
-Las citas viven en `localStorage`, en la clave `citasVeterinariaSanMarcos`, como un arreglo de objetos con esta forma. Es el **contrato** que debe respetar cualquier módulo que las lea o las modifique (por ejemplo, el de recepción):
+Las citas viven en la base de datos de **`ms-citas`** (puerto 8085, `veterinaria_citas`) y el frontend las consume con `src/services/citaService.js`, que traduce la respuesta de la API a esta forma (el **contrato** que usan los componentes). El tutor recibe solo sus citas y la recepción recibe la agenda completa:
 
 | Campo | Ejemplo | Quién lo define |
 |---|---|---|
@@ -107,12 +107,12 @@ Las citas viven en `localStorage`, en la clave `citasVeterinariaSanMarcos`, como
 | `creadaEn` | `"2026-10-11T15:00:00.000Z"` | Fecha y hora de creación (ISO). |
 
 **Qué hace el módulo de recepción** (`/recepcion`):
-- **Confirmar:** cambiar `estado` a `"Confirmada"`.
-- **Proponer otro horario:** cambiar `fecha` y `hora` por el nuevo horario, poner `estado` en `"Reagendada"` y explicar el motivo en `nota`.
-- No tocar el resto de los campos, y guardar el arreglo completo en la misma clave.
-- El cupo de un horario se calcula a partir de las citas cuyo `estado` **no** es `"Cancelada"`, así que cancelar o reagendar libera el cupo automáticamente.
+- **Confirmar:** `PUT /api/citas/{id}/confirmar` (la cita pasa a `"Confirmada"`).
+- **Proponer otro horario:** `PUT /api/citas/{id}/reagendar` con `fecha`, `hora` y el motivo en `nota` (la cita pasa a `"Reagendada"`).
+- **Cancelar** (tutor o recepción): `PUT /api/citas/{id}/cancelar`.
+- El cupo de un horario se calcula en `ms-citas` a partir de las citas cuyo `estado` **no** es `"Cancelada"`, así que cancelar o reagendar libera el cupo automáticamente. Las horas libres se consultan con `GET /api/citas/disponibilidad?fecha=AAAA-MM-DD&servicio=<id>`.
 
-> ⚠️ **Supuestos de esta versión.** Sin backend, la ocupación de cada hora es simulada (una parte fija según el día y la hora, y otra que viene de las citas guardadas), y el horario, los cupos y la anticipación son valores de referencia. Todos se ajustan en un solo lugar: `src/data/clinica.js`.
+> ⚠️ **Dos fuentes de reglas.** Las reglas de la agenda (horario, bloques de 30 min, 3 cupos por bloque, anticipación de 2 horas a 4 semanas) las **aplica `ms-citas`**; el frontend solo dibuja los días y las horas con esos mismos valores (`src/data/clinica.js`). Si se cambian, deben cambiarse en ambos lados. El `id` de cada servicio del frontend es el `codigo` del servicio en `ms-servicios`.
 
 ---
 
@@ -217,21 +217,19 @@ Abre la dirección que muestra la terminal (normalmente `http://localhost:5173`)
 
 ## 💾 Datos y persistencia
 
-Mientras no exista el backend, la aplicación usa datos de demostración y guarda los cambios del usuario en `localStorage`:
+Las **mascotas** (`ms-mascotas`) y las **citas** (`ms-citas`) ya se guardan en sus microservicios. Lo que todavía no tiene backend usa datos de demostración y se guarda en `localStorage`:
 
 | Clave | Contenido |
 |---|---|
 | `ultimoContactoVeterinariaSanMarcos` | Último mensaje enviado desde Contacto |
 | `usuarioVeterinariaSanMarcos` | Datos personales del perfil |
-| `mascotasVeterinariaSanMarcos` | Mascotas registradas |
-| `citasVeterinariaSanMarcos` | Citas solicitadas, con su estado |
 | `fichasClinicasVeterinariaSanMarcos` | Fichas clínicas que registra recepción (solo se crea al registrar o editar algo) |
 
 > ⚠️ Son datos de prueba. No se guardan contraseñas ni datos reales.
 
 La ficha clínica (vacunas, desparasitaciones y consultas) la registra el personal de la clínica desde *Recepción*; el dueño solo la consulta desde *Mi perfil*. Para volver a los datos de demostración, borra estas claves desde las herramientas del navegador (*Application → Local Storage*).
 
-Las fechas de las citas y de la ficha clínica de demostración se calculan **relativas a la fecha de hoy**, para que siempre se vean todos los estados (próxima, vencida, al día). Como las citas se guardan en `localStorage` la primera vez que se abre la aplicación, quien ya la haya usado verá las fechas de ese primer día: para refrescarlas, borra la clave `citasVeterinariaSanMarcos`.
+Las fechas de la ficha clínica de demostración se calculan **relativas a la fecha de hoy**, para que siempre se vean todos los estados (próxima, vencida, al día).
 
 ---
 

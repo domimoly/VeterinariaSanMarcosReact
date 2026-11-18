@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
-import PasoFecha from "../PasoFecha";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
+import PasoFecha from "../Tutor/PasoFecha";
 import { formatearFecha } from "../../utils/fechas";
 
-function ReagendarCita({ cita, citasGuardadas, onGuardar, onCancelar }) {
+function ReagendarCita({ cita, citasGuardadas, guardando = false, error: errorApi = "", onGuardar, onCancelar }) {
   const [paso, setPaso] = useState(1);
   const [horario, setHorario] = useState(null);
   const [nota, setNota] = useState("");
@@ -12,7 +12,7 @@ function ReagendarCita({ cita, citasGuardadas, onGuardar, onCancelar }) {
   // PasoFecha espera la solicitud con la forma del agendamiento del tutor
   const citaParaFecha = {
     mascota: { id: cita.mascotaId, nombre: cita.mascotaNombre },
-    servicio: { nombre: cita.servicioNombre, duracion: cita.duracion, duracionMin: cita.duracionMin },
+    servicio: { id: cita.servicioId, nombre: cita.servicioNombre, duracion: cita.duracion, duracionMin: cita.duracionMin },
     fecha: "",
     hora: "",
   };
@@ -62,6 +62,12 @@ function ReagendarCita({ cita, citasGuardadas, onGuardar, onCancelar }) {
               </strong>
             </p>
 
+            {errorApi && (
+              <Alert variant="danger" role="alert">
+                {errorApi}
+              </Alert>
+            )}
+
             <Form.Group className="mb-4" controlId="nota-reagendar">
               <Form.Label>Motivo del cambio (lo verá el tutor)</Form.Label>
               <Form.Control
@@ -79,8 +85,8 @@ function ReagendarCita({ cita, citasGuardadas, onGuardar, onCancelar }) {
               <Button type="button" variant="outline-secondary" onClick={() => setPaso(1)}>
                 Volver
               </Button>
-              <Button type="submit" className="btn-contacto">
-                Reagendar cita
+              <Button type="submit" className="btn-contacto" disabled={guardando}>
+                {guardando ? "Guardando..." : "Reagendar cita"}
               </Button>
             </div>
           </Form>

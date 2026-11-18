@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
 import { agendamiento, horarioTexto } from "../../data/clinica";
+import { useDisponibilidad } from "../../hooks/useDisponibilidad";
 import {
   bloquesNecesarios,
   diasDeLaSemana,
@@ -18,7 +20,16 @@ function rangoDeSemana(offset) {
   return `${etiquetaDia(dias[0]).fechaCorta} al ${etiquetaDia(dias[5]).fechaCorta}`;
 }
 
-function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
+// Las horas libres vienen de ms-citas (GET /api/citas/disponibilidad), una consulta por cada día de la semana.
+function PasoFecha({
+  cita,
+  citasGuardadas,
+  onContinuar,
+  onAtras,
+  titulo = "Elige una hora para visitarnos",
+  textoContinuar = "Continuar",
+  textoAtras = "Atrás",
+}) {
   const [semana, setSemana] = useState(cita.fecha ? semanaDeFecha(cita.fecha) : 0);
   const [fecha, setFecha] = useState(cita.fecha);
   const [hora, setHora] = useState(cita.hora);
@@ -27,8 +38,11 @@ function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
   const duracionMin = cita.servicio.duracionMin;
   const bloques = bloquesNecesarios(duracionMin);
 
-  const dias = diasDeLaSemana(semana).map((fechaIso) => {
-    const horas = horasDelDia(fechaIso, duracionMin, citasGuardadas);
+  const fechasSemana = diasDeLaSemana(semana);
+  const { libres, cargando, error, sesionVencida, recargar } = useDisponibilidad(cita.servicio.id, fechasSemana);
+
+  const dias = fechasSemana.map((fechaIso) => {
+    const horas = horasDelDia(fechaIso, duracionMin, libres[fechaIso]);
     return { fechaIso, ...etiquetaDia(fechaIso), horas, hayDisponibles: horas.some((h) => h.disponible) };
   });
   const diaElegido = dias.find((dia) => dia.fechaIso === fecha);
@@ -49,7 +63,7 @@ function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
     const nuevosErrores = validarHorario({
       fecha,
       hora,
-      duracionMin,
+      libres: libres[fecha] ?? [],
       citasGuardadas,
       mascotaId: cita.mascota.id,
     });
@@ -60,9 +74,12 @@ function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
     onContinuar({ fecha, hora });
   }
 
+  // El token venció mientras se consultaban las horas
+  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
+
   return (
     <Form onSubmit={enviar} noValidate>
-      <h2 className="h4 mb-2">Elige una hora para visitarnos</h2>
+      <h2 className="h4 mb-2">{titulo}</h2>
       <p className="text-secondary">
         {cita.servicio.nombre} para {cita.mascota.nombre}
         {bloques > 1 && ` · dura ${cita.servicio.duracion}, por lo que reservaremos ${bloques} bloques de 30 minutos`}.
@@ -79,6 +96,21 @@ function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
         </Form.Select>
       </Form.Group>
 
+      {cargando && (
+        <p className="text-secondary" role="status">
+          Consultando horas disponibles...
+        </p>
+      )}
+
+      {!cargando && error && (
+        <Alert variant="danger" role="alert">
+          {error}{" "}
+          <Alert.Link as="button" type="button" onClick={recargar}>
+            Reintentar
+          </Alert.Link>
+        </Alert>
+      )}
+
       <fieldset className="mb-4">
         <legend className="form-label">Día</legend>
         <div className="opciones-dias">
@@ -90,11 +122,11 @@ function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
                 value={dia.fechaIso}
                 checked={fecha === dia.fechaIso}
                 onChange={() => elegirDia(dia.fechaIso)}
-                disabled={!dia.hayDisponibles}
+                disabled={cargando || !dia.hayDisponibles}
               />
               <strong>{dia.nombre}</strong>
               <span>{dia.fechaCorta}</span>
-              {!dia.hayDisponibles && <small>Sin horas</small>}
+              {!cargando && !dia.hayDisponibles && <small>Sin horas</small>}
             </label>
           ))}
         </div>
@@ -138,10 +170,10 @@ function PasoFecha({ cita, citasGuardadas, onContinuar, onAtras }) {
 
       <div className="d-flex gap-2">
         <Button type="button" variant="outline-secondary" onClick={onAtras}>
-          Atrás
+          {textoAtras}
         </Button>
         <Button type="submit" className="btn-contacto">
-          Continuar
+          {textoContinuar}
         </Button>
       </div>
     </Form>
