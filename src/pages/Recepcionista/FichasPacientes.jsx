@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
 import FormularioRegistroClinico from "../../components/Recepcionista/FormularioRegistroClinico";
 import ListaRegistrosClinicos from "../../components/Recepcionista/ListaRegistrosClinicos";
 import MenuRecepcion from "../../components/Recepcionista/MenuRecepcion";
 import { fichasClinicas } from "../../data/fichasClinicas";
-import { mascotasDemo } from "../../data/Tutor/mascotas";
-import { usuarioDemo } from "../../data/Tutor/usuario";
+import { useMascotas } from "../../hooks/useMascotas";
 import { leerJSON } from "../../utils/almacenamiento";
 import "./Recepcionista.css";
 
@@ -18,9 +18,8 @@ const secciones = [
 const fichaVacia = { vacunas: [], desparasitaciones: [], consultas: [] };
 
 function FichasPacientes() {
-  // Los pacientes son las mascotas registradas; el tutor es el usuario de la cuenta
-  const [mascotas] = useState(() => leerJSON("mascotasVeterinariaSanMarcos", mascotasDemo));
-  const [tutor] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
+  // Los pacientes son todas las mascotas registradas (vienen de ms-mascotas)
+  const { mascotas, cargando, error, sesionVencida, recargar } = useMascotas();
   const [fichas, setFichas] = useState(() => leerJSON("fichasClinicasVeterinariaSanMarcos", fichasClinicas));
 
   const [pacienteId, setPacienteId] = useState("");
@@ -56,6 +55,9 @@ function FichasPacientes() {
     }
   }
 
+  // El token venció mientras se usaba la página
+  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
+
   return (
     <main className="container py-4">
       <header className="encabezado-pagina text-center mb-4">
@@ -68,7 +70,18 @@ function FichasPacientes() {
       <section className="panel-recepcion">
         <h2 className="h4 mb-3">Fichas de pacientes</h2>
 
-        {!paciente ? (
+        {cargando ? (
+          <p className="text-secondary mb-0" role="status">
+            Cargando pacientes...
+          </p>
+        ) : error ? (
+          <Alert variant="danger" role="alert" className="mb-0">
+            {error}{" "}
+            <Alert.Link as="button" type="button" onClick={recargar}>
+              Reintentar
+            </Alert.Link>
+          </Alert>
+        ) : !paciente ? (
           <p className="text-secondary mb-0">Todavía no hay pacientes registrados.</p>
         ) : (
           <>
@@ -77,7 +90,7 @@ function FichasPacientes() {
               <Form.Select value={String(paciente.id)} onChange={cambiarPaciente}>
                 {mascotas.map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.nombre} ({m.especie}) · tutor: {tutor.nombre} {tutor.apellidos}
+                    {m.nombre} ({m.especie}) · tutor: {m.tutorCorreo}
                   </option>
                 ))}
               </Form.Select>

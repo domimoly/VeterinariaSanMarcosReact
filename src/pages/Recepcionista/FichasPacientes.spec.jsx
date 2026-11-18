@@ -1,34 +1,45 @@
 // Pruebas de la vista de Recepcionista
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
+import * as mascotaService from "../../services/mascotaService";
+import { instalarMascotasEnMemoria } from "../../test/mascotasEnMemoria";
 import FichasPacientes from "./FichasPacientes";
 
+vi.mock("../../services/mascotaService");
+
 const CLAVE = "fichasClinicasVeterinariaSanMarcos";
-const abrir = () => render(<MemoryRouter initialEntries={["/recepcion/fichas"]}><FichasPacientes /></MemoryRouter>);
+const abrir = async () => {
+  render(<MemoryRouter initialEntries={["/recepcion/fichas"]}><FichasPacientes /></MemoryRouter>);
+  // Espera a que terminen de cargar los pacientes (vienen de ms-mascotas)
+  await waitFor(() => expect(screen.queryByText("Cargando pacientes...")).not.toBeInTheDocument());
+};
 const seccion = (titulo) => screen.getByRole("heading", { name: titulo }).closest("div.mb-4");
 
 describe("FichasPacientes", () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    instalarMascotasEnMemoria(mascotaService);
+  });
   afterEach(() => vi.restoreAllMocks());
 
-  it("muestra la ficha del primer paciente junto a su tutor", () => {
-    abrir();
+  it("muestra la ficha del primer paciente junto a su tutor", async () => {
+    await abrir();
 
-    expect(screen.getByRole("option", { name: /Max \(Perro\) · tutor: Camila Rojas Soto/ })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: /Max \(Perro\) · tutor: camila.rojas@example.cl/ })).toBeInTheDocument();
     expect(screen.getByText("Séxtuple canina")).toBeInTheDocument();
   });
 
-  it("no guarda nada solo por abrir la página", () => {
-    abrir();
+  it("no guarda nada solo por abrir la página", async () => {
+    await abrir();
 
     expect(localStorage.getItem(CLAVE)).toBeNull();
   });
 
   it("cambia la ficha mostrada al elegir otro paciente", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     await usuario.selectOptions(screen.getByLabelText("Paciente"), "2");
 
@@ -38,7 +49,7 @@ describe("FichasPacientes", () => {
 
   it("registra una vacuna nueva y la guarda en el paciente elegido", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     await usuario.click(screen.getByRole("button", { name: "Agregar vacuna" }));
     await usuario.type(screen.getByLabelText("Vacuna"), "Rabia");
@@ -53,7 +64,7 @@ describe("FichasPacientes", () => {
 
   it("edita un registro existente", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
     const fila = screen.getByText("Antirrábica").closest("tr");
 
     await usuario.click(within(fila).getByRole("button", { name: "Editar" }));
@@ -67,7 +78,7 @@ describe("FichasPacientes", () => {
 
   it("registra una consulta con su diagnóstico", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     await usuario.click(screen.getByRole("button", { name: "Agregar consulta" }));
     fireEvent.change(screen.getByLabelText("Fecha"), { target: { value: "2025-06-01" } });
@@ -83,7 +94,7 @@ describe("FichasPacientes", () => {
   it("elimina un registro solo si se confirma", async () => {
     const usuario = userEvent.setup();
     const confirmar = vi.spyOn(window, "confirm").mockReturnValueOnce(false).mockReturnValueOnce(true);
-    abrir();
+    await abrir();
     const fila = () => screen.getByText("Antirrábica").closest("tr");
 
     await usuario.click(within(fila()).getByRole("button", { name: "Eliminar" }));
@@ -96,7 +107,7 @@ describe("FichasPacientes", () => {
 
   it("cierra el formulario al cancelar y al cambiar de paciente", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     await usuario.click(screen.getByRole("button", { name: "Agregar vacuna" }));
     await usuario.click(screen.getByRole("button", { name: "Cancelar" }));
@@ -107,17 +118,17 @@ describe("FichasPacientes", () => {
     expect(screen.queryByLabelText("Vacuna")).not.toBeInTheDocument();
   });
 
-  it("indica que no hay pacientes cuando no hay mascotas registradas", () => {
-    localStorage.setItem("mascotasVeterinariaSanMarcos", "[]");
-    abrir();
+  it("indica que no hay pacientes cuando no hay mascotas registradas", async () => {
+    instalarMascotasEnMemoria(mascotaService, []);
+    await abrir();
 
     expect(screen.getByText("Todavía no hay pacientes registrados.")).toBeInTheDocument();
   });
 
-  it("muestra 'Sin registros' en un paciente que todavía no tiene ficha", () => {
+  it("muestra 'Sin registros' en un paciente que todavía no tiene ficha", async () => {
     const nueva = { id: 99, nombre: "Coco", especie: "Conejo", raza: "", sexo: "Macho", fechaNacimiento: "2024-01-10", peso: 1.5, esterilizado: false, observaciones: "" };
-    localStorage.setItem("mascotasVeterinariaSanMarcos", JSON.stringify([nueva]));
-    abrir();
+    instalarMascotasEnMemoria(mascotaService, [nueva]);
+    await abrir();
 
     expect(screen.getAllByText("Sin registros.")).toHaveLength(3);
   });

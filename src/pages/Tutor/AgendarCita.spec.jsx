@@ -1,24 +1,32 @@
 // Pruebas adicionales para la cobertura (flujo completo de agendamiento)
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
+import * as mascotaService from "../../services/mascotaService";
+import { instalarMascotasEnMemoria } from "../../test/mascotasEnMemoria";
 import AgendarCita from "./AgendarCita";
 
 // Los días y las horas son radios ocultos por CSS: el usuario hace clic en su etiqueta
+vi.mock("../../services/mascotaService");
+
 const primeroHabilitado = (nombre) =>
   screen.getAllByRole("radio").filter((radio) => radio.name === nombre && !radio.disabled)[0].closest("label");
 
-const abrir = (ruta = "/agendar-cita") =>
+const abrir = async (ruta = "/agendar-cita") => {
   render(
     <MemoryRouter initialEntries={[ruta]}>
       <AgendarCita />
     </MemoryRouter>
   );
+  // Espera a que terminen de cargar las mascotas (vienen de ms-mascotas)
+  await waitFor(() => expect(screen.queryByText("Cargando tus mascotas...")).not.toBeInTheDocument());
+};
 
 describe("AgendarCita", () => {
   beforeEach(() => {
     localStorage.clear();
+    instalarMascotasEnMemoria(mascotaService);
     localStorage.setItem("citasVeterinariaSanMarcos", "[]"); // sin citas previas: resultado predecible
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-05T08:00:00")); // lunes
@@ -27,7 +35,7 @@ describe("AgendarCita", () => {
 
   it("empieza en el paso 1 y no avanza sin elegir mascota y servicio", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     expect(screen.getByRole("heading", { name: "Cuéntanos de tu mascota" })).toBeInTheDocument();
     await usuario.click(screen.getByRole("button", { name: "Continuar" }));
@@ -35,15 +43,15 @@ describe("AgendarCita", () => {
     expect(screen.getByText("Selecciona una mascota")).toBeInTheDocument();
   });
 
-  it("llega con el servicio elegido cuando viene desde Servicios", () => {
-    abrir("/agendar-cita?servicio=vacuna-triple-felina");
+  it("llega con el servicio elegido cuando viene desde Servicios", async () => {
+    await abrir("/agendar-cita?servicio=vacuna-triple-felina");
 
     expect(screen.getByText(/Elegiste "Vacuna Triple Felina"/)).toBeInTheDocument();
   });
 
   it("recorre los cuatro pasos, guarda la solicitud como Pendiente y muestra el éxito", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     // Paso 1: mascota y servicio
     await usuario.selectOptions(screen.getByLabelText("Mascota"), "2"); // Luna
@@ -71,7 +79,7 @@ describe("AgendarCita", () => {
 
   it("permite volver atrás sin perder lo elegido", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     await usuario.selectOptions(screen.getByLabelText("Mascota"), "2");
     await usuario.click(screen.getByLabelText(/Consulta General/));
@@ -83,7 +91,7 @@ describe("AgendarCita", () => {
 
   it("después de enviar permite empezar otra solicitud desde el paso 1", async () => {
     const usuario = userEvent.setup();
-    abrir();
+    await abrir();
 
     await usuario.selectOptions(screen.getByLabelText("Mascota"), "2");
     await usuario.click(screen.getByLabelText(/Consulta General/));

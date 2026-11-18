@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Alert, Button } from "react-bootstrap";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import EncabezadoPerfil from "../../components/Tutor/EncabezadoPerfil";
 import FormularioPerfil from "../../components/Tutor/FormularioPerfil";
 import TarjetaMascota from "../../components/Tutor/TarjetaMascota";
@@ -8,16 +8,17 @@ import FormularioMascota from "../../components/Tutor/FormularioMascota";
 import HistorialMascota from "../../components/Tutor/HistorialMascota";
 import ListaCitas from "../../components/Tutor/ListaCitas";
 import { usuarioDemo } from "../../data/Tutor/usuario";
-import { mascotasDemo } from "../../data/Tutor/mascotas";
 import { fichasClinicas } from "../../data/fichasClinicas";
 import { citasDemo } from "../../data/citas";
+import { useMascotas } from "../../hooks/useMascotas";
 import { leerJSON } from "../../utils/almacenamiento";
 import "./Tutor.css";
 
 function MiPerfil() {
   const [usuario, setUsuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
 
-  const [mascotas, setMascotas] = useState(() => leerJSON("mascotasVeterinariaSanMarcos", mascotasDemo));
+  // Las mascotas viven en ms-mascotas (base de datos), no en el navegador
+  const { mascotas, cargando, error, errorAccion, sesionVencida, recargar, crear, actualizar, eliminar } = useMascotas();
 
   const [citas, setCitas] = useState(() => leerJSON("citasVeterinariaSanMarcos", citasDemo));
 
@@ -29,10 +30,6 @@ function MiPerfil() {
   useEffect(() => {
     localStorage.setItem("usuarioVeterinariaSanMarcos", JSON.stringify(usuario));
   }, [usuario]);
-
-  useEffect(() => {
-    localStorage.setItem("mascotasVeterinariaSanMarcos", JSON.stringify(mascotas));
-  }, [mascotas]);
 
   useEffect(() => {
     localStorage.setItem("citasVeterinariaSanMarcos", JSON.stringify(citas));
@@ -62,13 +59,9 @@ function MiPerfil() {
     setFormularioAbierto(false);
   }
 
-  function guardarMascota(datos) {
-    if (mascotaEditando) {
-      setMascotas(mascotas.map((m) => (m.id === mascotaEditando.id ? { ...datos, id: m.id } : m)));
-    } else {
-      setMascotas([...mascotas, { ...datos, id: Date.now() }]);
-    }
-    cerrarFormulario();
+  async function guardarMascota(datos) {
+    const guardada = mascotaEditando ? await actualizar(mascotaEditando.id, datos) : await crear(datos);
+    if (guardada) cerrarFormulario();
   }
 
   function cancelarCita(id) {
@@ -77,11 +70,14 @@ function MiPerfil() {
     }
   }
 
-  function eliminarMascota(id) {
+  async function eliminarMascota(id) {
     if (window.confirm("¿Seguro que quieres eliminar esta mascota?")) {
-      setMascotas(mascotas.filter((m) => m.id !== id));
+      await eliminar(id);
     }
   }
+
+  // El token venció mientras se usaba la página
+  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
 
   return (
     <main className="container py-4">
@@ -114,6 +110,12 @@ function MiPerfil() {
           )}
         </div>
 
+        {errorAccion && (
+          <Alert variant="danger" role="alert">
+            {errorAccion}
+          </Alert>
+        )}
+
         {formularioAbierto && (
           <div className="mascota-formulario-caja mb-4">
             <h3 className="h5 mb-3">{mascotaEditando ? "Editar mascota" : "Nueva mascota"}</h3>
@@ -126,7 +128,18 @@ function MiPerfil() {
           </div>
         )}
 
-        {mascotas.length === 0 ? (
+        {cargando ? (
+          <p className="text-secondary mb-0" role="status">
+            Cargando tus mascotas...
+          </p>
+        ) : error ? (
+          <Alert variant="danger" role="alert" className="mb-0">
+            {error}{" "}
+            <Alert.Link as="button" type="button" onClick={recargar}>
+              Reintentar
+            </Alert.Link>
+          </Alert>
+        ) : mascotas.length === 0 ? (
           <p className="text-secondary mb-0">Aún no has registrado mascotas.</p>
         ) : (
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">

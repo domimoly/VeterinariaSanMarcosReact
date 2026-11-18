@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Alert } from "react-bootstrap";
+import { Navigate, useSearchParams } from "react-router-dom";
 import PasosCita from "../../components/Tutor/PasosCita";
 import ResumenCita from "../../components/Tutor/ResumenCita";
 import PasoMascota from "../../components/Tutor/PasoMascota";
@@ -8,9 +9,9 @@ import PasoTutor from "../../components/Tutor/PasoTutor";
 import PasoConfirmacion from "../../components/Tutor/PasoConfirmacion";
 import CitaSolicitada from "../../components/Tutor/CitaSolicitada";
 import { pasosCita } from "../../data/Tutor/pasosCita";
-import { mascotasDemo } from "../../data/Tutor/mascotas";
 import { usuarioDemo } from "../../data/Tutor/usuario";
 import { citasDemo } from "../../data/citas";
+import { useMascotas } from "../../hooks/useMascotas";
 import { leerJSON } from "../../utils/almacenamiento";
 import "./Tutor.css";
 
@@ -31,8 +32,8 @@ function AgendarCita() {
   const [paso, setPaso] = useState(1);
   const [cita, setCita] = useState(citaInicial);
 
-  // Las mascotas son las que el dueño registró en Mi perfil
-  const [mascotas] = useState(() => leerJSON("mascotasVeterinariaSanMarcos", mascotasDemo));
+  // Las mascotas son las que el dueño registró en Mi perfil (vienen de ms-mascotas)
+  const { mascotas, cargando, error, sesionVencida, recargar } = useMascotas();
 
   // Los datos del tutor vienen del perfil
   const [usuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
@@ -76,6 +77,9 @@ function AgendarCita() {
     setSolicitud(null);
   }
 
+  // El token venció mientras se usaba la página
+  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
+
   if (solicitud) {
     return (
       <main className="container py-4">
@@ -96,12 +100,29 @@ function AgendarCita() {
       <div className="row g-4">
         <div className="col-12 col-lg-8">
           <section className="perfil-caja">
-            {paso === 1 && <PasoMascota
+            {paso === 1 && cargando && (
+              <p className="text-secondary mb-0" role="status">
+                Cargando tus mascotas...
+              </p>
+            )}
+
+            {paso === 1 && !cargando && error && (
+              <Alert variant="danger" role="alert" className="mb-0">
+                {error}{" "}
+                <Alert.Link as="button" type="button" onClick={recargar}>
+                  Reintentar
+                </Alert.Link>
+              </Alert>
+            )}
+
+            {paso === 1 && !cargando && !error && (
+              <PasoMascota
                 mascotas={mascotas}
                 cita={cita}
                 servicioInicial={servicioInicial}
                 onContinuar={continuarMascota}
-              />}
+              />
+            )}
 
             {paso === 2 && (
               <PasoFecha
