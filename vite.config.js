@@ -15,6 +15,11 @@ export default defineConfig({
       // Alcance: las vistas del tutor (carpetas Tutor) y mis vistas públicas (Inicio, Servicios, Contacto y Blog)
       include: [
         'src/utils/**/*.js',
+        'src/services/**/*.js',
+        'src/components/{RutaProtegida,Navegacion}.jsx',
+        'src/components/Errores/**/*.jsx',
+        'src/pages/{Login,Registro,NoEncontrada}.jsx',
+        'src/pages/Errores/**/*.jsx',
         'src/pages/Tutor/**/*.jsx',
         'src/components/Tutor/**/*.jsx',
         'src/pages/Recepcionista/**/*.jsx',

@@ -11,6 +11,9 @@ import DetalleBlog from "./pages/DetalleBlog";
 import MiPerfil from "./pages/Tutor/MiPerfil";
 import AgendarCita from "./pages/Tutor/AgendarCita";
 import Login from "./pages/Login";
+import Registro from "./pages/Registro";
+import RutaProtegida from "./components/RutaProtegida";
+import { ROLES } from "./utils/sesion";
 import Usuarios from "./pages/Admin/Usuarios";
 import Nosotros from "./pages/Nosotros";
 import Tienda from "./pages/Tienda";
@@ -30,27 +33,37 @@ function App() {
       <Navegacion />
 
       <LimiteError>
-      <Routes>
-        <Route path="/" element={<Inicio />} />
-        <Route path="/servicios" element={<Servicios />} />
-        <Route path="/servicios/:categoria" element={<DetalleServicio />} />
-        <Route path="/contacto" element={<Contacto />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<DetalleBlog />} />
-        <Route path="/mi-perfil" element={<MiPerfil />} />
-        <Route path="/admin/usuarios" element={<Usuarios />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/agendar-cita" element={<AgendarCita />} />
-        <Route path="/nosotros" element={<Nosotros />} />
-        <Route path="/tienda" element={<Tienda />} />
-        <Route path="/carrito" element={<Carrito />} />
-        <Route path="/recepcion" element={<AgendaCitas />} />
-        <Route path="/recepcion/fichas" element={<FichasPacientes />} />
-        <Route path="/sesion-requerida" element={<SinSesion />} />
-        <Route path="/acceso-denegado" element={<SinPermiso />} />
-        <Route path="/error" element={<ErrorServidor />} />
-        <Route path="*" element={<NoEncontrada />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/servicios" element={<Servicios />} />
+          <Route path="/servicios/:categoria" element={<DetalleServicio />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<DetalleBlog />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
+
+          <Route element={<RutaProtegida roles={[ROLES.tutor]} />}>
+            <Route path="/mi-perfil" element={<MiPerfil />} />
+            <Route path="/agendar-cita" element={<AgendarCita />} />
+          </Route>
+
+          <Route element={<RutaProtegida roles={[ROLES.recepcionista]} />}>
+            <Route path="/recepcion" element={<AgendaCitas />} />
+            <Route path="/recepcion/fichas" element={<FichasPacientes />} />
+          </Route>
+
+          <Route element={<RutaProtegida roles={[ROLES.administrador]} />}>
+            <Route path="/admin/usuarios" element={<Usuarios />} />
+          </Route>
+          <Route path="/nosotros" element={<Nosotros />} />
+          <Route path="/tienda" element={<Tienda />} />
+          <Route path="/carrito" element={<Carrito />} />
+          <Route path="/sesion-requerida" element={<SinSesion />} />
+          <Route path="/acceso-denegado" element={<SinPermiso />} />
+          <Route path="/error" element={<ErrorServidor />} />
+          <Route path="*" element={<NoEncontrada />} />
+        </Routes>
       </LimiteError>
 
       <PiePagina />

@@ -1,42 +1,38 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button, Form } from "react-bootstrap";
+import { login } from "../services/authService";
+import { guardarSesion, rutaInicialDelRol } from "../utils/sesion";
 
 function Login() {
   const navigate = useNavigate();
+  const ubicacion = useLocation();
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  const manejarLogin = (e) => {
+  async function manejarLogin(e) {
     e.preventDefault();
-    
-    // Un intento fallido no debe conservar una sesión administrativa anterior.
-    sessionStorage.removeItem("adminVeterinariaAutenticado");
+    setError("");
 
-    // Validación de demostración del administrador.
-    if (correo.trim().toLowerCase() === "admin@duoc.cl" && password === "admin123") {
-      const usuarioAdmin = {
-        run: "11111111-1",
-        nombre: "Administrador",
-        apellidos: "San Marcos",
-        correo: "admin@duoc.cl",
-        telefono: "+56900000000",
-        direccion: "Av. San Marcos 123",
-        region: "ohiggins",
-        comuna: "Rancagua",
-        rol: "Administrador", // Este rol es la clave para que MiPerfil u otras vistas cambien
-      };
-
-      // La sesión del usuario se conserva en localStorage; la autorización de
-      // administración solo vive en esta pestaña y se crea tras validar el login.
-      localStorage.setItem("usuarioVeterinariaSanMarcos", JSON.stringify(usuarioAdmin));
-      sessionStorage.setItem("adminVeterinariaAutenticado", "true");
-      navigate("/admin/usuarios", { replace: true });
-    } else {
-      setError("Correo o contraseña incorrectos");
+    if (!correo.trim() || !password) {
+      setError("Ingresa tu correo y tu contraseña.");
+      return;
     }
-  };
+
+    setEnviando(true);
+    try {
+      const sesion = await login({ correo: correo.trim(), password });
+      guardarSesion(sesion);
+      // Si venía de una página protegida, vuelve a ella; si no, va a su vista según el rol.
+      navigate(ubicacion.state?.desde ?? rutaInicialDelRol(sesion.rol), { replace: true });
+    } catch (e) {
+      setError(e.estado === 401 ? "Correo o contraseña incorrectos." : e.message);
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <main className="container py-5" style={{ maxWidth: "500px" }}>
@@ -45,31 +41,39 @@ function Login() {
         <Form onSubmit={manejarLogin} noValidate>
           <Form.Group className="mb-3" controlId="correoLogin">
             <Form.Label>Correo electrónico</Form.Label>
-            <Form.Control 
+            <Form.Control
               type="email"
               autoComplete="username"
-              value={correo} 
-              onChange={(e) => setCorreo(e.target.value)} 
-              required 
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              required
             />
           </Form.Group>
 
           <Form.Group className="mb-4" controlId="passLogin">
             <Form.Label>Contraseña</Form.Label>
-            <Form.Control 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
+            <Form.Control
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </Form.Group>
 
-          {error && <p className="text-danger small fw-bold mb-3">{error}</p>}
+          {error && (
+            <p className="text-danger small fw-bold mb-3" role="alert">
+              {error}
+            </p>
+          )}
 
-          <Button type="submit" className="btn-contacto w-100">
-            Ingresar
+          <Button type="submit" className="btn-contacto w-100" disabled={enviando}>
+            {enviando ? "Ingresando..." : "Ingresar"}
           </Button>
         </Form>
+        <p className="text-center small mt-4 mb-0">
+          ¿Aún no tienes cuenta? <Link to="/registro">Regístrate como tutor</Link>
+        </p>
       </section>
     </main>
   );

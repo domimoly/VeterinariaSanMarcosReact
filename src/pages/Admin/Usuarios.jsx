@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Badge, Button, Col, Form, InputGroup, Modal, Row, Table } from "react-bootstrap";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { usuarioDemo } from "../../data/Tutor/usuario";
 import "./Usuarios.css";
 
@@ -50,7 +50,6 @@ function Usuarios() {
     try { return JSON.parse(localStorage.getItem(CLAVE_SESION) || "null"); }
     catch { return null; }
   }, []);
-  const adminAutenticado = sessionStorage.getItem("adminVeterinariaAutenticado") === "true";
 
   useEffect(() => {
     localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuarios));
@@ -65,10 +64,6 @@ function Usuarios() {
 
   const activos = usuarios.filter((usuario) => usuario.estado === "Activo").length;
   const administradores = usuarios.filter((usuario) => usuario.rol === "Administrador").length;
-
-  if (!adminAutenticado || !sesion || sesion.rol !== "Administrador" || sesion.correo?.toLowerCase() !== "admin@duoc.cl") {
-    return <Navigate to="/login" replace />;
-  }
 
   function abrirEdicion(usuario) {
     setUsuarioEditando(usuario);
@@ -115,7 +110,7 @@ function Usuarios() {
     setUsuarios((actuales) => actuales.map((usuario) => usuario.id === usuarioEditando.id ? actualizado : usuario));
 
     // Si el administrador edita su propio registro, se sincroniza también la sesión actual.
-    if (usuarioEditando.id === sesion.id || usuarioEditando.correo === sesion.correo) {
+    if (sesion && (usuarioEditando.id === sesion.id || usuarioEditando.correo === sesion.correo)) {
       localStorage.setItem(CLAVE_SESION, JSON.stringify({ ...sesion, ...actualizado }));
     }
     setGuardado(true);
@@ -131,7 +126,7 @@ function Usuarios() {
           <h1>Gestión de usuarios</h1>
           <p className="mb-0">Consulta y actualiza las cuentas registradas en Veterinaria San Marcos.</p>
         </div>
-        <div className="admin-encabezado-acciones"><span className="admin-sesion"><span className="admin-punto" /> Sesión administrador</span><Link className="btn btn-outline-secondary" to="/mi-perfil">Volver al perfil</Link></div>
+        <div className="admin-encabezado-acciones"><span className="admin-sesion"><span className="admin-punto" /> Sesión administrador</span><Link className="btn btn-outline-secondary" to="/">Volver al inicio</Link></div>
       </header>
 
       <section className="row g-3 mb-4" aria-label="Resumen de usuarios">
