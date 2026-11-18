@@ -217,17 +217,16 @@ Abre la dirección que muestra la terminal (normalmente `http://localhost:5173`)
 
 ## 💾 Datos y persistencia
 
-Las **mascotas** (`ms-mascotas`) y las **citas** (`ms-citas`) ya se guardan en sus microservicios. Lo que todavía no tiene backend usa datos de demostración y se guarda en `localStorage`:
+Las **mascotas** (`ms-mascotas`), las **citas** (`ms-citas`) y las **fichas clínicas** (`ms-fichas`, puerto 8086) ya se guardan en sus microservicios. Lo que todavía no tiene backend usa datos de demostración y se guarda en `localStorage`:
 
 | Clave | Contenido |
 |---|---|
 | `ultimoContactoVeterinariaSanMarcos` | Último mensaje enviado desde Contacto |
 | `usuarioVeterinariaSanMarcos` | Datos personales del perfil |
-| `fichasClinicasVeterinariaSanMarcos` | Fichas clínicas que registra recepción (solo se crea al registrar o editar algo) |
 
 > ⚠️ Son datos de prueba. No se guardan contraseñas ni datos reales.
 
-La ficha clínica (vacunas, desparasitaciones y consultas) la registra el personal de la clínica desde *Recepción*; el dueño solo la consulta desde *Mi perfil*. Para volver a los datos de demostración, borra estas claves desde las herramientas del navegador (*Application → Local Storage*).
+La ficha clínica (vacunas, desparasitaciones y consultas) la registra el personal de la clínica desde *Recepción* con `POST/PUT/DELETE /api/fichas`; el dueño solo la consulta desde *Mi perfil* (`GET /api/fichas?mascotaId=`). En `ms-fichas` cada registro se guarda con un `tipo` (`VACUNA`, `DESPARASITACION` o `CONSULTA`) y `src/services/fichaService.js` los agrupa en las tres listas que usa la pantalla. Para volver a los datos de demostración, borra estas claves desde las herramientas del navegador (*Application → Local Storage*).
 
 Las fechas de la ficha clínica de demostración se calculan **relativas a la fecha de hoy**, para que siempre se vean todos los estados (próxima, vencida, al día).
 

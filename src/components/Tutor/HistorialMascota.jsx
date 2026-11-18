@@ -1,20 +1,24 @@
 import { useState } from "react";
-import { Form } from "react-bootstrap";
+import { Alert, Form } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
 import TablaControles from "./TablaControles";
 import TarjetaConsulta from "./TarjetaConsulta";
+import { useFicha } from "../../hooks/useFicha";
 import { estadoControl, etiquetasEstado, formatearFecha } from "../../utils/fechas";
 
-const fichaVacia = { vacunas: [], desparasitaciones: [], consultas: [] };
-
-function HistorialMascota({ mascotas, fichas }) {
+// La ficha de la mascota elegida viene de ms-fichas
+function HistorialMascota({ mascotas }) {
   const [idSeleccionado, setIdSeleccionado] = useState("");
 
-  if (mascotas.length === 0) {
+  const mascota = mascotas.find((m) => String(m.id) === idSeleccionado) ?? mascotas[0];
+  const { ficha, cargando, error, sesionVencida, recargar } = useFicha(mascota?.id);
+
+  if (!mascota) {
     return <p className="text-secondary mb-0">Registra una mascota para ver su ficha clínica.</p>;
   }
 
-  const mascota = mascotas.find((m) => String(m.id) === idSeleccionado) ?? mascotas[0];
-  const ficha = fichas[mascota.id] ?? fichaVacia;
+  // El token venció mientras se consultaba la ficha
+  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
 
   const consultas = [...ficha.consultas].sort((a, b) => b.fecha.localeCompare(a.fecha));
   const avisos = [...ficha.vacunas, ...ficha.desparasitaciones].filter(
@@ -33,6 +37,21 @@ function HistorialMascota({ mascotas, fichas }) {
           ))}
         </Form.Select>
       </Form.Group>
+
+      {cargando && (
+        <p className="text-secondary" role="status">
+          Cargando la ficha...
+        </p>
+      )}
+
+      {!cargando && error && (
+        <Alert variant="danger" role="alert">
+          {error}{" "}
+          <Alert.Link as="button" type="button" onClick={recargar}>
+            Reintentar
+          </Alert.Link>
+        </Alert>
+      )}
 
       {avisos.length > 0 && (
         <div className="aviso-vencimiento mb-4" role="alert">

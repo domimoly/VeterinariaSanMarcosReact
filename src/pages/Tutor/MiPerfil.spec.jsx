@@ -3,13 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { vi } from "vitest";
 import * as citaService from "../../services/citaService";
+import * as fichaService from "../../services/fichaService";
 import * as mascotaService from "../../services/mascotaService";
 import { instalarCitasEnMemoria } from "../../test/citasEnMemoria";
+import { instalarFichasEnMemoria } from "../../test/fichasEnMemoria";
 import { instalarMascotasEnMemoria } from "../../test/mascotasEnMemoria";
 import MiPerfil from "./MiPerfil";
 
 vi.mock("../../services/mascotaService");
 vi.mock("../../services/citaService");
+vi.mock("../../services/fichaService");
 
 const abrir = async (ruta = "/mi-perfil") => {
   render(
@@ -20,6 +23,7 @@ const abrir = async (ruta = "/mi-perfil") => {
   // Espera a que terminen de cargar las mascotas (ms-mascotas) y las citas (ms-citas)
   await waitFor(() => expect(screen.queryByText("Cargando tus mascotas...")).not.toBeInTheDocument());
   await waitFor(() => expect(screen.queryByText("Cargando tus citas...")).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText("Cargando la ficha...")).not.toBeInTheDocument());
 };
 
 describe("MiPerfil", () => {
@@ -27,6 +31,7 @@ describe("MiPerfil", () => {
     localStorage.clear();
     instalarMascotasEnMemoria(mascotaService);
     instalarCitasEnMemoria(citaService);
+    instalarFichasEnMemoria(fichaService);
     Element.prototype.scrollIntoView = vi.fn(); // jsdom no la implementa
   });
   afterEach(() => vi.restoreAllMocks());
@@ -136,6 +141,7 @@ describe("MiPerfil: errores del servicio de mascotas", () => {
     Element.prototype.scrollIntoView = vi.fn();
     instalarMascotasEnMemoria(mascotaService);
     instalarCitasEnMemoria(citaService);
+    instalarFichasEnMemoria(fichaService);
   });
   afterEach(() => vi.restoreAllMocks());
 
@@ -190,6 +196,7 @@ describe("MiPerfil: errores del servicio de citas", () => {
     Element.prototype.scrollIntoView = vi.fn();
     instalarMascotasEnMemoria(mascotaService);
     instalarCitasEnMemoria(citaService);
+    instalarFichasEnMemoria(fichaService);
   });
   afterEach(() => vi.restoreAllMocks());
 

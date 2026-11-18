@@ -8,7 +8,6 @@ import FormularioMascota from "../../components/Tutor/FormularioMascota";
 import HistorialMascota from "../../components/Tutor/HistorialMascota";
 import ListaCitas from "../../components/Tutor/ListaCitas";
 import { usuarioDemo } from "../../data/Tutor/usuario";
-import { fichasClinicas } from "../../data/fichasClinicas";
 import { useCitas } from "../../hooks/useCitas";
 import { useMascotas } from "../../hooks/useMascotas";
 import { leerJSON } from "../../utils/almacenamiento";
@@ -203,7 +202,7 @@ function MiPerfil() {
 
       <section className="perfil-caja mt-4">
         <h2 className="h4 mb-4">Ficha clínica</h2>
-        <HistorialMascota mascotas={mascotas} fichas={fichasClinicas} />
+        <HistorialMascota mascotas={mascotas} />
       </section>
     </main>
   );

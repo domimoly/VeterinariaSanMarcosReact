@@ -4,9 +4,8 @@ import { Navigate } from "react-router-dom";
 import FormularioRegistroClinico from "../../components/Recepcionista/FormularioRegistroClinico";
 import ListaRegistrosClinicos from "../../components/Recepcionista/ListaRegistrosClinicos";
 import MenuRecepcion from "../../components/Recepcionista/MenuRecepcion";
-import { fichasClinicas } from "../../data/fichasClinicas";
+import { useFicha } from "../../hooks/useFicha";
 import { useMascotas } from "../../hooks/useMascotas";
-import { leerJSON } from "../../utils/almacenamiento";
 import "./Recepcionista.css";
 
 const secciones = [
@@ -15,48 +14,48 @@ const secciones = [
   { tipo: "consultas", titulo: "Consultas y tratamientos", agregar: "Agregar consulta" },
 ];
 
-const fichaVacia = { vacunas: [], desparasitaciones: [], consultas: [] };
-
 function FichasPacientes() {
   // Los pacientes son todas las mascotas registradas (vienen de ms-mascotas)
-  const { mascotas, cargando, error, sesionVencida, recargar } = useMascotas();
-  const [fichas, setFichas] = useState(() => leerJSON("fichasClinicasVeterinariaSanMarcos", fichasClinicas));
+  const { mascotas, cargando, error, sesionVencida: mascotasSinSesion, recargar } = useMascotas();
 
   const [pacienteId, setPacienteId] = useState("");
   const [edicion, setEdicion] = useState(null); // { tipo, registro } mientras hay un formulario abierto
 
   const paciente = mascotas.find((m) => String(m.id) === pacienteId) ?? mascotas[0];
-  const ficha = paciente ? (fichas[paciente.id] ?? fichaVacia) : fichaVacia;
 
-  // Se guarda al registrar o editar (no al abrir la página) para no congelar las fechas de demostración
-  function guardarFichas(nuevas) {
-    setFichas(nuevas);
-    localStorage.setItem("fichasClinicasVeterinariaSanMarcos", JSON.stringify(nuevas));
-  }
+  // La ficha del paciente elegido viene de ms-fichas
+  const {
+    ficha,
+    cargando: cargandoFicha,
+    error: errorFicha,
+    errorAccion,
+    sesionVencida: fichaSinSesion,
+    recargar: recargarFicha,
+    limpiarError,
+    guardar,
+    eliminar,
+  } = useFicha(paciente?.id);
 
   function cambiarPaciente(evento) {
     setPacienteId(evento.target.value);
     setEdicion(null);
+    limpiarError();
   }
 
-  function guardarRegistro(datos) {
+  async function guardarRegistro(datos) {
     const { tipo, registro } = edicion;
-    const lista = registro
-      ? ficha[tipo].map((existente) => (existente.id === registro.id ? { ...datos, id: existente.id } : existente))
-      : [...ficha[tipo], { ...datos, id: Date.now() }];
-
-    guardarFichas({ ...fichas, [paciente.id]: { ...ficha, [tipo]: lista } });
-    setEdicion(null);
+    const guardado = await guardar(tipo, registro ? registro.id : null, datos);
+    if (guardado) setEdicion(null);
   }
 
-  function eliminarRegistro(tipo, id) {
+  async function eliminarRegistro(tipo, id) {
     if (window.confirm("¿Seguro que quieres eliminar este registro?")) {
-      guardarFichas({ ...fichas, [paciente.id]: { ...ficha, [tipo]: ficha[tipo].filter((r) => r.id !== id) } });
+      await eliminar(tipo, id);
     }
   }
 
   // El token venció mientras se usaba la página
-  if (sesionVencida) return <Navigate to="/sesion-requerida" replace />;
+  if (mascotasSinSesion || fichaSinSesion) return <Navigate to="/sesion-requerida" replace />;
 
   return (
     <main className="container py-4">
@@ -96,7 +95,28 @@ function FichasPacientes() {
               </Form.Select>
             </Form.Group>
 
-            {secciones.map(({ tipo, titulo, agregar }) => (
+            {errorAccion && (
+              <Alert variant="danger" role="alert">
+                {errorAccion}
+              </Alert>
+            )}
+
+            {cargandoFicha && (
+              <p className="text-secondary" role="status">
+                Cargando la ficha...
+              </p>
+            )}
+
+            {!cargandoFicha && errorFicha && (
+              <Alert variant="danger" role="alert">
+                {errorFicha}{" "}
+                <Alert.Link as="button" type="button" onClick={recargarFicha}>
+                  Reintentar
+                </Alert.Link>
+              </Alert>
+            )}
+
+            {!cargandoFicha && !errorFicha && secciones.map(({ tipo, titulo, agregar }) => (
               <div className="mb-4" key={tipo}>
                 <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                   <h3 className="h5 mb-0">{titulo}</h3>
