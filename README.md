@@ -53,6 +53,15 @@ Este repositorio es la **migración a React** del sitio estático original (HTML
 
 ---
 
+## 🛡️ Administración
+
+El rol **Administrador** tiene acceso total (caso, sección 0.2): gestiona las cuentas, ve los reportes del sistema y también entra a la agenda y a las fichas de recepción.
+
+- **Usuarios** (`/admin/usuarios`): consume `ms-auth` (`/api/usuarios`). Crea cuentas con el rol elegido, edita nombre y rol, cambia la contraseña y **desactiva o reactiva** cuentas (una cuenta desactivada no puede iniciar sesión, pero conserva sus datos). El correo no se edita porque identifica a la persona en los demás servicios. El administrador no puede desactivarse ni cambiarse el rol a sí mismo.
+- **Reportes** (`/admin/reportes`): junta las listas completas de `ms-auth`, `ms-citas` y `ms-mascotas` (el administrador recibe todo, no solo lo propio) y muestra totales, citas por estado, servicios más solicitados, usuarios por rol y mascotas por especie.
+
+---
+
 ## 📅 Agendamiento de citas
 
 El dueño de la mascota solicita una hora siguiendo cuatro pasos, con un resumen que se va completando a un costado:
@@ -130,7 +139,9 @@ Las citas viven en la base de datos de **`ms-citas`** (puerto 8085, `veterinaria
 | `/blog/:slug` | Detalle de un artículo (ej. `/blog/01`) |
 | `/mi-perfil` | Perfil, mascotas, citas y ficha clínica |
 | `/mi-perfil#mis-citas` | Perfil, directo a la sección de citas |
-| `/recepcion` | Recepción: agenda de citas (confirmar y reagendar) |
+| `/recepcion` | Recepción: agenda de citas (confirmar y reagendar). También la ve el administrador |
+| `/admin/usuarios` | Administración: crear, editar, asignar rol y desactivar cuentas (solo administrador) |
+| `/admin/reportes` | Administración: reportes de cuentas, citas y mascotas (solo administrador) |
 | `/recepcion/fichas` | Recepción: fichas clínicas de los pacientes |
 | `*` | Página no encontrada |
 

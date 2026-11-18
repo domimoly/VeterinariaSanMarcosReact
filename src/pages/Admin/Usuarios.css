@@ -67,3 +67,16 @@
 .bi-pencil-square::before { content: "✎"; }
 .bi-info-circle::before { content: "ⓘ"; }
 .bi-check2::before { content: "✓"; }
+
+/* Reportes del administrador */
+.admin-reporte-caja { padding: 1.25rem 1.5rem; background: #fff; border: 1px solid #e1e8ee; border-radius: 16px; box-shadow: 0 8px 26px rgba(20,48,68,.055); height: 100%; }
+.admin-reporte-caja h2 { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 800; color: var(--color-primario-oscuro); }
+.admin-barra-fila { display: grid; grid-template-columns: minmax(110px, 1fr) 2fr auto; align-items: center; gap: .75rem; margin-bottom: .6rem; font-size: .9rem; }
+.admin-barra-pista { height: .6rem; overflow: hidden; background: #edf2f5; border-radius: 999px; }
+.admin-barra-relleno { display: block; height: 100%; background: var(--color-secundario); border-radius: 999px; }
+.admin-barra-fila strong { min-width: 1.5rem; text-align: right; }
+@media (max-width: 575.98px) {
+  .admin-filtros { grid-template-columns: 1fr; }
+  .admin-barra-fila { grid-template-columns: 1fr auto; }
+  .admin-barra-pista { grid-column: 1 / -1; order: 3; }
+}

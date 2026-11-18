@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import RutaProtegida from "./components/RutaProtegida";
 import { ROLES } from "./utils/sesion";
+import Reportes from "./pages/Admin/Reportes";
 import Usuarios from "./pages/Admin/Usuarios";
 import Nosotros from "./pages/Nosotros";
 import Tienda from "./pages/Tienda";
@@ -48,13 +49,14 @@ function App() {
             <Route path="/agendar-cita" element={<AgendarCita />} />
           </Route>
 
-          <Route element={<RutaProtegida roles={[ROLES.recepcionista]} />}>
+          <Route element={<RutaProtegida roles={[ROLES.recepcionista, ROLES.administrador]} />}>
             <Route path="/recepcion" element={<AgendaCitas />} />
             <Route path="/recepcion/fichas" element={<FichasPacientes />} />
           </Route>
 
           <Route element={<RutaProtegida roles={[ROLES.administrador]} />}>
             <Route path="/admin/usuarios" element={<Usuarios />} />
+            <Route path="/admin/reportes" element={<Reportes />} />
           </Route>
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/tienda" element={<Tienda />} />

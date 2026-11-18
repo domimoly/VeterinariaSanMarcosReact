@@ -24,7 +24,7 @@ describe("App: acceso por rol", () => {
     localStorage.clear();
   });
 
-  it.each(["/mi-perfil", "/agendar-cita", "/recepcion", "/recepcion/fichas", "/admin/usuarios"])(
+  it.each(["/mi-perfil", "/agendar-cita", "/recepcion", "/recepcion/fichas", "/admin/usuarios", "/admin/reportes"])(
     "sin sesión, %s lleva al login",
     (ruta) => {
       abrir(ruta);
@@ -55,6 +55,25 @@ describe("App: acceso por rol", () => {
     abrir("/recepcion");
     expect(screen.queryByRole("heading", { name: /No tienes permiso/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Iniciar sesión" })).not.toBeInTheDocument();
+  });
+
+  it("una recepcionista no puede entrar a Usuarios ni a Reportes", () => {
+    guardarSesion(sesiones.recepcion);
+    abrir("/admin/reportes");
+    expect(screen.getByRole("heading", { name: /No tienes permiso/i })).toBeInTheDocument();
+  });
+
+  it("un administrador tiene acceso total: también entra a la agenda y a las fichas de recepción", () => {
+    guardarSesion(sesiones.admin);
+    abrir("/recepcion/fichas");
+    expect(screen.queryByRole("heading", { name: /No tienes permiso/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Recepción" })).toBeInTheDocument();
+  });
+
+  it("un administrador entra a los reportes", () => {
+    guardarSesion(sesiones.admin);
+    abrir("/admin/reportes");
+    expect(screen.getByRole("heading", { name: "Reportes del sistema" })).toBeInTheDocument();
   });
 
   it("un administrador entra a la gestión de usuarios", () => {

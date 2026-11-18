@@ -25,6 +25,8 @@ export default defineConfig({
         'src/components/Tutor/**/*.jsx',
         'src/pages/Recepcionista/**/*.jsx',
         'src/components/Recepcionista/**/*.jsx',
+        'src/pages/Admin/**/*.jsx',
+        'src/components/Admin/**/*.jsx',
         'src/pages/{Inicio,Servicios,DetalleServicio,Contacto,Blog,DetalleBlog}.jsx',
         'src/components/{TarjetaServicio,TarjetaDetalleServicio,TarjetaBlog,FormularioContacto}.jsx',
         'src/pages/{Tienda,Carrito,Nosotros}.jsx',

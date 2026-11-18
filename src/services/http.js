@@ -1,7 +1,7 @@
 import { cerrarSesion, obtenerToken } from "../utils/sesion";
 
 // Petición a un microservicio: agrega el token de la sesión y traduce los errores.
-// Los microservicios responden los errores como { error } o { mensaje }.
+// Los microservicios responden los errores como { error } o { mensaje } (con { errores } si hay campos inválidos).
 export async function solicitar(baseUrl, ruta, opciones = {}) {
   const headers = { "Content-Type": "application/json", ...opciones.headers };
   const token = obtenerToken();
@@ -29,7 +29,9 @@ export async function solicitar(baseUrl, ruta, opciones = {}) {
     } catch {
       // La respuesta de error no traía JSON: se usa el mensaje por defecto.
     }
-    const error = new Error(cuerpo.error ?? cuerpo.mensaje ?? "No se pudo completar la solicitud.");
+    // ms-auth detalla los campos inválidos en "errores"; se muestra el primero porque es más útil que "Datos inválidos"
+    const detalle = cuerpo.errores ? Object.values(cuerpo.errores)[0] : undefined;
+    const error = new Error(detalle ?? cuerpo.error ?? cuerpo.mensaje ?? "No se pudo completar la solicitud.");
     error.estado = respuesta.status;
     throw error;
   }

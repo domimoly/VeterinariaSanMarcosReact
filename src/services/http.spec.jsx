@@ -56,4 +56,15 @@ describe("solicitar", () => {
     fetch.mockRejectedValue(new TypeError("Failed to fetch"));
     await expect(solicitar("http://api/x", "/cosas")).rejects.toThrow(/No se pudo conectar/);
   });
+
+  it("cuando hay campos inválidos muestra el primer detalle en vez de 'Datos inválidos'", async () => {
+    fetch.mockReturnValue(
+      responder(400, { mensaje: "Datos inválidos", errores: { nombre: "El nombre es obligatorio", correo: "Correo inválido" } })
+    );
+
+    await expect(solicitar("http://api/x", "/cosas")).rejects.toMatchObject({
+      message: "El nombre es obligatorio",
+      estado: 400,
+    });
+  });
 });
