@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { vi } from "vitest";
@@ -107,5 +107,85 @@ describe("Reportes (administración)", () => {
     await abrir();
 
     expect(await screen.findByText("Sesión requerida")).toBeInTheDocument();
+  });
+
+  describe("período y exportación", () => {
+    const citasConFecha = [
+      { id: 1, codigo: "C-1", fecha: "2026-10-05", hora: "10:00", estado: "Confirmada", servicioNombre: "Consulta General", mascotaNombre: "Luna", especie: "Perro", tutorCorreo: "a@a.cl" },
+      { id: 2, codigo: "C-2", fecha: "2026-11-02", hora: "11:00", estado: "Pendiente", servicioNombre: "Vacuna Triple Felina", mascotaNombre: "Michi", especie: "Gato", tutorCorreo: "b@b.cl" },
+    ];
+
+    beforeEach(() => {
+      instalarCitasEnMemoria(citaService, citasConFecha);
+      instalarMascotasEnMemoria(mascotaService, [
+        { id: 1, nombre: "Luna", especie: "Perro", registradaEn: "2026-10-03" },
+        { id: 2, nombre: "Michi", especie: "Gato", registradaEn: "2026-11-01" },
+      ]);
+    });
+
+    it("muestra los pacientes nuevos y las atenciones por mes", async () => {
+      await abrir();
+
+      expect(within(caja("Pacientes nuevos por mes")).getByText("Octubre 2026")).toBeInTheDocument();
+      expect(within(caja("Atenciones por mes")).getByText("Noviembre 2026")).toBeInTheDocument();
+      expect(screen.getByText("2 atenciones en el período")).toBeInTheDocument();
+    });
+
+    it("recalcula todo al elegir un período con las fechas", async () => {
+      await abrir();
+      fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2026-11-01" } });
+      fireEvent.change(screen.getByLabelText("Hasta"), { target: { value: "2026-11-30" } });
+
+      expect(screen.getByText("1 atención en el período")).toBeInTheDocument();
+      expect(within(caja("Atenciones por mes")).queryByText("Octubre 2026")).not.toBeInTheDocument();
+      expect(within(screen.getByRole("region", { name: "Totales" })).getByText("Pacientes nuevos").nextSibling).toHaveTextContent("1");
+    });
+
+    it("el atajo «Todo el historial» quita el período", async () => {
+      const usuario = userEvent.setup();
+      await abrir();
+      fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2026-11-01" } });
+      await usuario.click(screen.getByRole("button", { name: "Todo el historial" }));
+
+      expect(screen.getByLabelText("Desde")).toHaveValue("");
+      expect(screen.getByText("2 atenciones en el período")).toBeInTheDocument();
+    });
+
+    it("avisa cuando «Desde» es posterior a «Hasta» y no oculta los datos", async () => {
+      await abrir();
+      fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2026-12-01" } });
+      fireEvent.change(screen.getByLabelText("Hasta"), { target: { value: "2026-11-01" } });
+
+      expect(screen.getByRole("alert")).toHaveTextContent("no puede ser posterior");
+      expect(screen.getByText("2 atenciones en el período")).toBeInTheDocument();
+    });
+
+    it("descarga las atenciones del período como CSV", async () => {
+      const usuario = userEvent.setup();
+      const crear = vi.fn(() => "blob:prueba");
+      const revocar = vi.fn();
+      URL.createObjectURL = crear;
+      URL.revokeObjectURL = revocar;
+      const clic = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+      await abrir();
+      fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2026-11-01" } });
+      await usuario.click(screen.getByRole("button", { name: /Descargar atenciones/ }));
+
+      expect(crear).toHaveBeenCalledTimes(1);
+      const archivo = crear.mock.calls[0][0];
+      expect(archivo.type).toContain("text/csv");
+      expect(await archivo.text()).toContain("C-2");
+      expect(await archivo.text()).not.toContain("C-1");
+      expect(clic).toHaveBeenCalledTimes(1);
+      expect(revocar).toHaveBeenCalledWith("blob:prueba");
+      clic.mockRestore();
+    });
+
+    it("deshabilita la descarga si no hay atenciones en el período", async () => {
+      await abrir();
+      fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2030-01-01" } });
+
+      expect(screen.getByRole("button", { name: /Descargar atenciones/ })).toBeDisabled();
+    });
   });
 });

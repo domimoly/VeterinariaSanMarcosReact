@@ -12,6 +12,8 @@ describe("MenuAdmin", () => {
 
     expect(screen.getByRole("link", { name: "Usuarios" })).toHaveAttribute("href", "/admin/usuarios");
     expect(screen.getByRole("link", { name: "Reportes" })).toHaveClass("active");
+    expect(screen.getByRole("link", { name: "Productos" })).toHaveAttribute("href", "/admin/productos");
+    expect(screen.getByRole("link", { name: "Pedidos" })).toHaveAttribute("href", "/recepcion/pedidos");
     expect(screen.getByRole("link", { name: "Agenda de citas" })).toHaveAttribute("href", "/recepcion");
     expect(screen.getByRole("link", { name: "Fichas de pacientes" })).toHaveAttribute("href", "/recepcion/fichas");
   });

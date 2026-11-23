@@ -5,14 +5,17 @@ import { vi } from "vitest";
 import * as citaService from "../../services/citaService";
 import * as fichaService from "../../services/fichaService";
 import * as mascotaService from "../../services/mascotaService";
+import * as perfilService from "../../services/perfilService";
 import { instalarCitasEnMemoria } from "../../test/citasEnMemoria";
 import { instalarFichasEnMemoria } from "../../test/fichasEnMemoria";
 import { instalarMascotasEnMemoria } from "../../test/mascotasEnMemoria";
+import { instalarPerfilEnMemoria } from "../../test/perfilEnMemoria";
 import MiPerfil from "./MiPerfil";
 
 vi.mock("../../services/mascotaService");
 vi.mock("../../services/citaService");
 vi.mock("../../services/fichaService");
+vi.mock("../../services/perfilService");
 
 const abrir = async (ruta = "/mi-perfil") => {
   render(
@@ -24,6 +27,7 @@ const abrir = async (ruta = "/mi-perfil") => {
   await waitFor(() => expect(screen.queryByText("Cargando tus mascotas...")).not.toBeInTheDocument());
   await waitFor(() => expect(screen.queryByText("Cargando tus citas...")).not.toBeInTheDocument());
   await waitFor(() => expect(screen.queryByText("Cargando la ficha...")).not.toBeInTheDocument());
+  await waitFor(() => expect(screen.queryByText("Cargando tus datos...")).not.toBeInTheDocument());
 };
 
 describe("MiPerfil", () => {
@@ -32,6 +36,7 @@ describe("MiPerfil", () => {
     instalarMascotasEnMemoria(mascotaService);
     instalarCitasEnMemoria(citaService);
     instalarFichasEnMemoria(fichaService);
+    instalarPerfilEnMemoria(perfilService);
     Element.prototype.scrollIntoView = vi.fn(); // jsdom no la implementa
   });
   afterEach(() => vi.restoreAllMocks());
@@ -45,7 +50,14 @@ describe("MiPerfil", () => {
     expect(screen.getByRole("heading", { name: "Ficha clínica" })).toBeInTheDocument();
   });
 
-  it("guarda en localStorage los cambios de los datos personales", async () => {
+  it("ofrece ir a los pedidos de la tienda y a agendar una cita", async () => {
+    await abrir();
+
+    expect(screen.getByRole("link", { name: "Mis pedidos" })).toHaveAttribute("href", "/mis-pedidos");
+    expect(screen.getByRole("link", { name: "Agendar cita" })).toHaveAttribute("href", "/agendar-cita");
+  });
+
+  it("guarda en ms-auth los cambios de los datos personales", async () => {
     const usuario = userEvent.setup();
     await abrir();
     const seccion = screen.getByRole("heading", { name: "Mis datos personales" }).closest("section");
@@ -54,7 +66,39 @@ describe("MiPerfil", () => {
     await usuario.type(within(seccion).getByLabelText("Nombre"), "Camila Andrea");
     await usuario.click(within(seccion).getByRole("button", { name: "Guardar cambios" }));
 
-    expect(JSON.parse(localStorage.getItem("usuarioVeterinariaSanMarcos")).nombre).toBe("Camila Andrea");
+    expect(await within(seccion).findByText("Tus datos se guardaron correctamente.")).toBeInTheDocument();
+    expect(perfilService.guardarPerfil).toHaveBeenCalledWith(expect.objectContaining({ nombre: "Camila Andrea" }));
+    // Nada de los datos personales queda en el navegador
+    expect(localStorage.getItem("usuarioVeterinariaSanMarcos")).toBeNull();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Camila Andrea");
+  });
+
+  it("muestra el motivo si ms-auth rechaza los datos y no confirma el guardado", async () => {
+    const usuario = userEvent.setup();
+    perfilService.guardarPerfil.mockRejectedValueOnce(new Error("Ya existe una cuenta con ese RUN"));
+    await abrir();
+    const seccion = screen.getByRole("heading", { name: "Mis datos personales" }).closest("section");
+
+    await usuario.click(within(seccion).getByRole("button", { name: "Guardar cambios" }));
+
+    expect(await within(seccion).findByText("Ya existe una cuenta con ese RUN")).toBeInTheDocument();
+    expect(within(seccion).queryByText("Tus datos se guardaron correctamente.")).not.toBeInTheDocument();
+  });
+
+  it("si no puede cargar los datos personales, lo avisa y permite reintentar", async () => {
+    const usuario = userEvent.setup();
+    perfilService.obtenerPerfil.mockRejectedValueOnce(new Error("No se pudo conectar con el servidor."));
+    render(
+      <MemoryRouter>
+        <MiPerfil />
+      </MemoryRouter>
+    );
+    const seccion = (await screen.findByRole("heading", { name: "Mis datos personales" })).closest("section");
+
+    expect(await within(seccion).findByText(/No se pudo conectar con el servidor/)).toBeInTheDocument();
+    await usuario.click(within(seccion).getByRole("button", { name: "Reintentar" }));
+
+    expect(await within(seccion).findByLabelText("Nombre")).toHaveValue("Camila");
   });
 
   it("agrega una mascota nueva y la envía al servicio de mascotas", async () => {
@@ -142,6 +186,7 @@ describe("MiPerfil: errores del servicio de mascotas", () => {
     instalarMascotasEnMemoria(mascotaService);
     instalarCitasEnMemoria(citaService);
     instalarFichasEnMemoria(fichaService);
+    instalarPerfilEnMemoria(perfilService);
   });
   afterEach(() => vi.restoreAllMocks());
 
@@ -197,6 +242,7 @@ describe("MiPerfil: errores del servicio de citas", () => {
     instalarMascotasEnMemoria(mascotaService);
     instalarCitasEnMemoria(citaService);
     instalarFichasEnMemoria(fichaService);
+    instalarPerfilEnMemoria(perfilService);
   });
   afterEach(() => vi.restoreAllMocks());
 

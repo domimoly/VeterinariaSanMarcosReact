@@ -7,14 +7,22 @@ import TarjetaMascota from "../../components/Tutor/TarjetaMascota";
 import FormularioMascota from "../../components/Tutor/FormularioMascota";
 import HistorialMascota from "../../components/Tutor/HistorialMascota";
 import ListaCitas from "../../components/Tutor/ListaCitas";
-import { usuarioDemo } from "../../data/Tutor/usuario";
 import { useCitas } from "../../hooks/useCitas";
 import { useMascotas } from "../../hooks/useMascotas";
-import { leerJSON } from "../../utils/almacenamiento";
+import { usePerfil } from "../../hooks/usePerfil";
 import "./Tutor.css";
 
 function MiPerfil() {
-  const [usuario, setUsuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
+  // Los datos personales viven en ms-auth (base de datos), no en el navegador
+  const {
+    perfil: usuario,
+    cargando: cargandoPerfil,
+    error: errorPerfil,
+    errorAccion: errorGuardarPerfil,
+    sesionVencida: perfilSinSesion,
+    recargar: recargarPerfil,
+    guardar: guardarPerfil,
+  } = usePerfil();
 
   // Las mascotas viven en ms-mascotas (base de datos), no en el navegador
   const {
@@ -45,18 +53,10 @@ function MiPerfil() {
   const [formularioAbierto, setFormularioAbierto] = useState(false);
   const [mascotaEditando, setMascotaEditando] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem("usuarioVeterinariaSanMarcos", JSON.stringify(usuario));
-  }, [usuario]);
-
   // Permite llegar directo a una sección con /mi-perfil#mis-citas
   useEffect(() => {
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
   }, [hash]);
-
-  function guardarUsuario(nuevosDatos) {
-    setUsuario(nuevosDatos);
-  }
 
   function abrirFormularioNuevo() {
     setMascotaEditando(null);
@@ -91,27 +91,35 @@ function MiPerfil() {
   }
 
   // El token venció mientras se usaba la página
-  if (mascotasSinSesion || citasSinSesion) return <Navigate to="/sesion-requerida" replace />;
+  if (mascotasSinSesion || citasSinSesion || perfilSinSesion) return <Navigate to="/sesion-requerida" replace />;
 
   return (
     <main className="container py-4">
-      <EncabezadoPerfil usuario={usuario} />
-
-      {usuario.rol === "Administrador" && sessionStorage.getItem("adminVeterinariaAutenticado") === "true" && (
-        <div className="perfil-caja mt-4">
-          <h2 className="h5">Panel de administración</h2>
-          <p className="mb-3 text-secondary">
-            Consulta las cuentas registradas y administra sus datos desde el panel.
-          </p>
-          <Link to="/admin/usuarios" className="btn btn-contacto">
-            <i className="bi bi-people me-2" aria-hidden="true" />Gestionar usuarios
-          </Link>
-        </div>
-      )}
+      {usuario && <EncabezadoPerfil usuario={usuario} />}
 
       <section className="perfil-caja mt-4">
         <h2 className="h4 mb-4">Mis datos personales</h2>
-        <FormularioPerfil usuario={usuario} onGuardar={guardarUsuario} />
+        {cargandoPerfil ? (
+          <p className="text-secondary mb-0" role="status">
+            Cargando tus datos...
+          </p>
+        ) : errorPerfil ? (
+          <Alert variant="danger" role="alert" className="mb-0">
+            {errorPerfil}{" "}
+            <Alert.Link as="button" type="button" onClick={recargarPerfil}>
+              Reintentar
+            </Alert.Link>
+          </Alert>
+        ) : (
+          <>
+            {errorGuardarPerfil && (
+              <Alert variant="danger" role="alert">
+                {errorGuardarPerfil}
+              </Alert>
+            )}
+            <FormularioPerfil usuario={usuario} onGuardar={guardarPerfil} />
+          </>
+        )}
       </section>
 
       <section className="perfil-caja mt-4">
@@ -173,9 +181,14 @@ function MiPerfil() {
       <section className="perfil-caja mt-4" id="mis-citas">
         <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
           <h2 className="h4 mb-0">Mis citas</h2>
-          <Link to="/agendar-cita" className="btn btn-contacto">
-            Agendar cita
-          </Link>
+          <div className="d-flex gap-2 flex-wrap">
+            <Link to="/mis-pedidos" className="btn btn-outline-secondary d-inline-flex align-items-center">
+              Mis pedidos
+            </Link>
+            <Link to="/agendar-cita" className="btn btn-contacto">
+              Agendar cita
+            </Link>
+          </div>
         </div>
 
         {errorAccionCitas && (

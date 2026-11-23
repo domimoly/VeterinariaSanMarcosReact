@@ -18,6 +18,16 @@ describe("MenuRecepcion", () => {
     expect(screen.getByRole("link", { name: "Agenda de citas" })).not.toHaveClass("active");
   });
 
+  it("incluye los pedidos de la tienda", () => {
+    render(
+      <MemoryRouter initialEntries={["/recepcion/pedidos"]}>
+        <MenuRecepcion />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("link", { name: "Pedidos" })).toHaveClass("active");
+  });
+
   it("al administrador le muestra su menú completo para poder volver a Usuarios y Reportes", () => {
     guardarSesion({ token: "t", nombre: "Admin", correo: "admin@correo.cl", rol: "ADMINISTRADOR" });
     render(

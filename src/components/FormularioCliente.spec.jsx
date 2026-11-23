@@ -59,4 +59,23 @@ describe("FormularioCliente", () => {
       expect.objectContaining({ nombre: "Pedro", correo: "pedro@correo.cl", region: "rm", comuna: "Santiago" })
     );
   });
+
+  it("mientras se procesa el pago bloquea el botón y avisa", () => {
+    render(<FormularioCliente datosIniciales={datosVacios} total={12600} onPagar={vi.fn()} enviando />);
+
+    expect(screen.getByRole("button", { name: "Procesando pago..." })).toBeDisabled();
+  });
+
+  it("muestra el error que devolvió el servidor", () => {
+    render(
+      <FormularioCliente
+        datosIniciales={datosVacios}
+        total={12600}
+        onPagar={vi.fn()}
+        error="No hay stock suficiente de Amoxibay 250mg"
+      />
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent("No hay stock suficiente de Amoxibay 250mg");
+  });
 });

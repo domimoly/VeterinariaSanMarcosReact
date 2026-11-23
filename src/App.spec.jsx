@@ -24,13 +24,36 @@ describe("App: acceso por rol", () => {
     localStorage.clear();
   });
 
-  it.each(["/mi-perfil", "/agendar-cita", "/recepcion", "/recepcion/fichas", "/admin/usuarios", "/admin/reportes"])(
+  it.each(["/mi-perfil", "/agendar-cita", "/carrito", "/mis-pedidos", "/recepcion", "/recepcion/fichas", "/admin/usuarios", "/admin/reportes"])(
     "sin sesión, %s lleva al login",
     (ruta) => {
       abrir(ruta);
       expect(screen.getByRole("heading", { name: "Iniciar sesión" })).toBeInTheDocument();
     }
   );
+
+  it("el catálogo de la tienda se ve sin sesión, pero el carrito exige iniciarla", () => {
+    abrir("/tienda");
+    expect(screen.getByRole("heading", { name: "Productos" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Iniciar sesión" })).not.toBeInTheDocument();
+  });
+
+  it.each([["tutor"], ["recepcion"], ["admin"]])("con sesión de %s se puede entrar al carrito", (quien) => {
+    guardarSesion(sesiones[quien]);
+    abrir("/carrito");
+    expect(screen.queryByRole("heading", { name: "Iniciar sesión" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /No tienes permiso/i })).not.toBeInTheDocument();
+  });
+
+  it("las páginas informativas siguen abiertas sin sesión", () => {
+    abrir("/servicios");
+    expect(screen.queryByRole("heading", { name: "Iniciar sesión" })).not.toBeInTheDocument();
+  });
+
+  it("sin sesión se puede entrar al registro", () => {
+    abrir("/registro");
+    expect(screen.getByRole("heading", { name: "Crear cuenta de tutor" })).toBeInTheDocument();
+  });
 
   it("un tutor no puede entrar a Recepción ni a Administración", () => {
     guardarSesion(sesiones.tutor);

@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
 import PasoTutor from "./PasoTutor";
-import { usuarioDemo } from "../../data/Tutor/usuario";
+import { usuarioDemo } from "../../test/perfilDemo";
 
 const mostrar = (props = {}) =>
   render(

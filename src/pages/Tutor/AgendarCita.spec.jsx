@@ -5,13 +5,16 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { vi } from "vitest";
 import * as citaService from "../../services/citaService";
 import * as mascotaService from "../../services/mascotaService";
+import * as perfilService from "../../services/perfilService";
 import { esperarHoras, instalarCitasEnMemoria } from "../../test/citasEnMemoria";
 import { instalarMascotasEnMemoria } from "../../test/mascotasEnMemoria";
+import { instalarPerfilEnMemoria } from "../../test/perfilEnMemoria";
 import AgendarCita from "./AgendarCita";
 
 // Los días y las horas son radios ocultos por CSS: el usuario hace clic en su etiqueta
 vi.mock("../../services/mascotaService");
 vi.mock("../../services/citaService");
+vi.mock("../../services/perfilService");
 
 const primeroHabilitado = (nombre) =>
   screen.getAllByRole("radio").filter((radio) => radio.name === nombre && !radio.disabled)[0].closest("label");
@@ -47,6 +50,7 @@ describe("AgendarCita", () => {
   beforeEach(() => {
     localStorage.clear();
     instalarMascotasEnMemoria(mascotaService);
+    instalarPerfilEnMemoria(perfilService);
     instalarCitasEnMemoria(citaService, []); // sin citas previas: resultado predecible
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-05T08:00:00")); // lunes

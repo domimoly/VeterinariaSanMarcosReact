@@ -34,3 +34,8 @@ export function login({ correo, password }) {
 export function registrarTutor({ nombre, correo, password }) {
   return pedir("/auth/registro", { method: "POST", body: JSON.stringify({ nombre, correo, password }) });
 }
+
+// Pide un token nuevo con el token vigente (POST /api/auth/renovar).
+export function renovarToken(token) {
+  return pedir("/auth/renovar", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+}

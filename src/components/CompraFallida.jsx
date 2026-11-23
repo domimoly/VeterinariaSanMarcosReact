@@ -6,7 +6,7 @@ import TablaCarrito from "./TablaCarrito";
 function CompraFallida({ compra, onReintentar }) {
   return (
     <div className="card shadow-sm p-4">
-      <h1 className="h3">❌ No se pudo realizar el pago. nro #{compra.numero}</h1>
+      <h1 className="h3">❌ No se pudo realizar el pago</h1>
       <p className="text-secondary small">Detalle de compra</p>
 
       <div className="text-center mb-3">

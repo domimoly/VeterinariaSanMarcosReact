@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { regiones } from "../../data/Tutor/regiones";
 import { hoyIso } from "../../utils/fechas";
+import { esRunValido } from "../../utils/run";
 
 function FormularioPerfil({ usuario, onGuardar }) {
   const [datos, setDatos] = useState(usuario);
   const [errores, setErrores] = useState({});
   const [mensaje, setMensaje] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
   const comunasDisponibles = regiones.find((region) => region.id === datos.region)?.comunas ?? [];
   const hoy = hoyIso();
@@ -20,15 +22,17 @@ function FormularioPerfil({ usuario, onGuardar }) {
     }
   }
 
-  function enviar(evento) {
+  async function enviar(evento) {
     evento.preventDefault();
     const nuevosErrores = {};
 
     const nombre = datos.nombre.trim();
     const apellidos = datos.apellidos.trim();
-    const correo = datos.correo.trim();
+    const run = datos.run.trim();
     const telefono = datos.telefono.trim();
     const direccion = datos.direccion.trim();
+
+    if (run && !esRunValido(run)) nuevosErrores.run = "Ingresa un RUN válido, ej: 12.345.678-5";
 
     if (!nombre) nuevosErrores.nombre = "El nombre es obligatorio";
     else if (nombre.length < 2) nuevosErrores.nombre = "Mínimo 2 caracteres";
@@ -51,20 +55,17 @@ function FormularioPerfil({ usuario, onGuardar }) {
     if (!direccion) nuevosErrores.direccion = "La dirección es obligatoria";
     else if (direccion.length > 300) nuevosErrores.direccion = "Máximo 300 caracteres";
 
-    const formatoCorreoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-    if (!correo) nuevosErrores.correo = "El correo es obligatorio";
-    else if (!correo.includes("@")) nuevosErrores.correo = "El correo debe contener @";
-    else if (!formatoCorreoValido) nuevosErrores.correo = "Ingresa un correo válido, ej: nombre@dominio.cl";
-    else if (correo.length > 100) nuevosErrores.correo = "Máximo 100 caracteres";
-
     setErrores(nuevosErrores);
     if (Object.keys(nuevosErrores).length > 0) {
       setMensaje("Revisa los campos marcados");
       return;
     }
 
-    onGuardar({ ...datos, nombre, apellidos, correo, telefono, direccion });
-    setMensaje("Tus datos se guardaron correctamente.");
+    // El guardado puede fallar en el servidor (el mensaje de error lo muestra la página)
+    setGuardando(true);
+    const guardado = await onGuardar({ ...datos, run, nombre, apellidos, telefono, direccion });
+    setGuardando(false);
+    setMensaje(guardado ? "Tus datos se guardaron correctamente." : "");
   }
 
   return (
@@ -72,8 +73,17 @@ function FormularioPerfil({ usuario, onGuardar }) {
       <Row className="g-3">
         <Col xs={12} md={6}>
           <Form.Group controlId="run">
-            <Form.Label>RUN</Form.Label>
-            <Form.Control name="run" type="text" value={datos.run} readOnly disabled />
+            <Form.Label>RUN (opcional)</Form.Label>
+            <Form.Control
+              name="run"
+              type="text"
+              placeholder="12.345.678-5"
+              maxLength={12}
+              value={datos.run}
+              onChange={cambiar}
+              isInvalid={Boolean(errores.run)}
+            />
+            <Form.Control.Feedback type="invalid">{errores.run}</Form.Control.Feedback>
           </Form.Group>
         </Col>
 
@@ -125,15 +135,8 @@ function FormularioPerfil({ usuario, onGuardar }) {
         <Col xs={12} md={6}>
           <Form.Group controlId="correo">
             <Form.Label>Correo</Form.Label>
-            <Form.Control
-              name="correo"
-              type="email"
-              maxLength={100}
-              value={datos.correo}
-              onChange={cambiar}
-              isInvalid={Boolean(errores.correo)}
-            />
-            <Form.Control.Feedback type="invalid">{errores.correo}</Form.Control.Feedback>
+            {/* Es la cuenta con la que se inicia sesión: no se cambia desde aquí */}
+            <Form.Control name="correo" type="email" value={datos.correo} readOnly disabled />
           </Form.Group>
         </Col>
 
@@ -209,8 +212,8 @@ function FormularioPerfil({ usuario, onGuardar }) {
         </Col>
       </Row>
 
-      <Button type="submit" className="btn-contacto mt-4">
-        Guardar cambios
+      <Button type="submit" className="btn-contacto mt-4" disabled={guardando}>
+        {guardando ? "Guardando..." : "Guardar cambios"}
       </Button>
 
       {mensaje && (

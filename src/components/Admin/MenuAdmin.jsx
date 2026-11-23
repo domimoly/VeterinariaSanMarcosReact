@@ -11,11 +11,17 @@ function MenuAdmin() {
       <Nav.Link as={NavLink} to="/admin/reportes">
         Reportes
       </Nav.Link>
+      <Nav.Link as={NavLink} to="/admin/productos">
+        Productos
+      </Nav.Link>
       <Nav.Link as={NavLink} to="/recepcion" end>
         Agenda de citas
       </Nav.Link>
       <Nav.Link as={NavLink} to="/recepcion/fichas">
         Fichas de pacientes
+      </Nav.Link>
+      <Nav.Link as={NavLink} to="/recepcion/pedidos">
+        Pedidos
       </Nav.Link>
     </Nav>
   );

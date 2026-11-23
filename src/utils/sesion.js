@@ -41,3 +41,15 @@ export function rutaInicialDelRol(rol) {
   if (rol === ROLES.recepcionista) return "/recepcion";
   return "/mi-perfil";
 }
+
+// Lee la fecha de vencimiento (claim "exp", en segundos) del JWT. Solo sirve para decidir cuándo
+// renovar: la validez real del token la sigue verificando el backend.
+export function expiracionDelToken(token) {
+  try {
+    const carga = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const { exp } = JSON.parse(atob(carga));
+    return typeof exp === "number" ? exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}

@@ -47,8 +47,9 @@ Este repositorio es la **migración a React** del sitio estático original (HTML
 | 📅 | **Agendar cita** | Solicitud de hora en 4 pasos con validaciones según el caso (ver más abajo). |
 | ✉️ | **Contacto** | Formulario con validaciones, último mensaje guardado, mapa y botón "Cómo llegar". |
 | 📰 | **Blog** | Listado de artículos y detalle de cada uno. |
-| 👤 | **Mi perfil** | Datos personales, mascotas, **mis citas** y ficha clínica con vacunas y avisos de vencimiento. |
-| 🧑‍⚕️ | **Recepción** | Agenda de todas las citas con filtros, para confirmarlas o reagendarlas, y registro y edición de las fichas clínicas de los pacientes. |
+| 👤 | **Mi perfil** | Datos personales (se guardan en `ms-auth`: RUN con dígito verificador, teléfono, región, comuna y dirección), mascotas, **mis citas** y ficha clínica con vacunas y avisos de vencimiento. |
+| 🧑‍⚕️ | **Recepción** | Agenda de todas las citas con filtros, para confirmarlas o reagendarlas, registro y edición de las fichas clínicas de los pacientes y **pedidos de la tienda** (marcar entregado o cancelar). |
+| 🛍️ | **Tienda y carrito** | Catálogo desde `ms-productos`, aviso al añadir, contador en el menú (también en el celular), carrito editable con stock real y pago. El catálogo es público; para ver el carrito y pagar hay que iniciar sesión. El tutor revisa sus compras en **Mis pedidos**. |
 | 🧭 | **Página 404** | Mensaje claro para direcciones que no existen. |
 
 ---
@@ -58,7 +59,8 @@ Este repositorio es la **migración a React** del sitio estático original (HTML
 El rol **Administrador** tiene acceso total (caso, sección 0.2): gestiona las cuentas, ve los reportes del sistema y también entra a la agenda y a las fichas de recepción.
 
 - **Usuarios** (`/admin/usuarios`): consume `ms-auth` (`/api/usuarios`). Crea cuentas con el rol elegido, edita nombre y rol, cambia la contraseña y **desactiva o reactiva** cuentas (una cuenta desactivada no puede iniciar sesión, pero conserva sus datos). El correo no se edita porque identifica a la persona en los demás servicios. El administrador no puede desactivarse ni cambiarse el rol a sí mismo.
-- **Reportes** (`/admin/reportes`): junta las listas completas de `ms-auth`, `ms-citas` y `ms-mascotas` (el administrador recibe todo, no solo lo propio) y muestra totales, citas por estado, servicios más solicitados, usuarios por rol y mascotas por especie.
+- **Productos** (`/admin/productos`): consume `ms-productos` (`/api/productos`). Crea productos, edita precio, stock y descripción, **oculta o muestra** un producto en la tienda y lo elimina (los pedidos anteriores conservan su registro). El código no se puede cambiar.
+- **Reportes** (`/admin/reportes`): junta las listas completas de `ms-auth`, `ms-citas` y `ms-mascotas` (el administrador recibe todo, no solo lo propio) y muestra totales, citas por estado, atenciones y pacientes nuevos por mes, servicios más solicitados, usuarios por rol y mascotas por especie. Se puede filtrar por **período** (desde/hasta o atajos) y descargar las atenciones del período en **CSV**.
 
 ---
 
@@ -137,12 +139,18 @@ Las citas viven en la base de datos de **`ms-citas`** (puerto 8085, `veterinaria
 | `/contacto` | Formulario de contacto y mapa |
 | `/blog` | Listado de artículos |
 | `/blog/:slug` | Detalle de un artículo (ej. `/blog/01`) |
+| `/registro` | Crear cuenta de tutor (también desde *Registrarse* en el menú) |
 | `/mi-perfil` | Perfil, mascotas, citas y ficha clínica |
 | `/mi-perfil#mis-citas` | Perfil, directo a la sección de citas |
 | `/recepcion` | Recepción: agenda de citas (confirmar y reagendar). También la ve el administrador |
 | `/admin/usuarios` | Administración: crear, editar, asignar rol y desactivar cuentas (solo administrador) |
 | `/admin/reportes` | Administración: reportes de cuentas, citas y mascotas (solo administrador) |
 | `/recepcion/fichas` | Recepción: fichas clínicas de los pacientes |
+| `/recepcion/pedidos` | Recepción y administrador: pedidos de la tienda (ver detalle, marcar entregado, cancelar) |
+| `/admin/productos` | Administración: catálogo de la tienda (solo administrador) |
+| `/tienda` | Catálogo de productos (público) |
+| `/carrito` | Carrito y pago (requiere sesión; el carrito se conserva en el navegador y, al ingresar, se vuelve a él) |
+| `/mis-pedidos` | Historial de compras del tutor |
 | `*` | Página no encontrada |
 
 ---
@@ -228,12 +236,12 @@ Abre la dirección que muestra la terminal (normalmente `http://localhost:5173`)
 
 ## 💾 Datos y persistencia
 
-Las **mascotas** (`ms-mascotas`), las **citas** (`ms-citas`) y las **fichas clínicas** (`ms-fichas`, puerto 8086) ya se guardan en sus microservicios. Lo que todavía no tiene backend usa datos de demostración y se guarda en `localStorage`:
+Las **mascotas** (`ms-mascotas`), las **citas** (`ms-citas`), las **fichas clínicas** (`ms-fichas`, puerto 8086), los **productos** (`ms-productos`, 8087) y los **pedidos** (`ms-pedidos`, 8088) ya se guardan en sus microservicios, y los **datos personales del tutor** en `ms-auth` (`GET/PUT /api/auth/perfil`). Lo que todavía no tiene backend usa datos de demostración y se guarda en `localStorage`:
 
 | Clave | Contenido |
 |---|---|
 | `ultimoContactoVeterinariaSanMarcos` | Último mensaje enviado desde Contacto |
-| `usuarioVeterinariaSanMarcos` | Datos personales del perfil |
+| `carritoVeterinariaSanMarcos` | Carrito: solo código y cantidad de cada producto (precio y stock se leen siempre de la API) |
 
 > ⚠️ Son datos de prueba. No se guardan contraseñas ni datos reales.
 
@@ -250,7 +258,7 @@ Las fechas de la ficha clínica de demostración se calculan **relativas a la fe
 - [x] Reemplazar los marcadores de imagen por las fotografías definitivas
 - [ ] Autenticación real y rutas protegidas por rol
 - [x] Módulo de recepción para confirmar o reagendar citas y registrar fichas clínicas
-- [ ] Conexión con el backend de microservicios (Spring Boot + API REST) y disponibilidad real de horas
+- [x] Conexión con el backend de microservicios (Spring Boot + API REST), disponibilidad real de horas y tienda con pedidos
 
 ---
 
@@ -267,3 +275,24 @@ npm.cmd exec vitest run -- src/pages/tienda.spec.jsx src/pages/Nosotros.spec.jsx
 
 Domi
 npm.cmd exec vitest run -- src/utils/citas.spec.jsx src/utils/horarios.spec.jsx src/components/Tutor/PasoConfirmacion.spec.jsx src/components/Tutor/TarjetaCita.spec.jsx src/components/Tutor/HistorialMascota.spec.jsx src/components/Recepcionista/TablaCitas.spec.jsx src/pages/Recepcionista/AgendaCitas.spec.jsx src/components/Recepcionista/ReagendarCita.spec.jsx src/components/Recepcionista/FormularioRegistroClinico.spec.jsx 
+
+## Mapa de la clínica
+
+`components/MapaClinica.jsx` muestra un mapa interactivo (Leaflet + OpenStreetMap) en Contacto, con la dirección, el botón **Usar mi ubicación** (geolocalización del navegador) y **Cómo llegar** (indicaciones desde la ubicación del usuario). La dirección y las coordenadas se editan en `utils/clinica.js`.
+
+## Renovación de sesión
+
+`hooks/useRenovacionSesion.js` renueva el token con `POST /api/auth/renovar` cuando faltan menos de 5 minutos para que venza; si la renovación falla o el token ya venció, cierra la sesión.
+
+## Tienda y carrito
+
+- El **catálogo** (`/tienda` y `GET /api/productos`) es público, como en toda tienda online; es la única lectura de la API que se puede hacer sin token (el caso pide autenticación en todo salvo login y registro, y esto se justifica por ser una tienda). **Ver el carrito y pagar** exige sesión (cualquier rol): sin ella `RutaProtegida` lleva al login y, al ingresar, vuelve al carrito. El carrito vive en el navegador y se ajusta solo al catálogo: si un producto se retira o queda con menos stock, se quita o se baja la cantidad.
+- El formulario de pago parte con los datos del perfil (nombre, apellidos, correo y dirección).
+- El pago es una **simulación** en el frontend (`pagoAprobado`, se aprueba el 70 %): un pago rechazado no crea pedido; uno aprobado hace `POST /api/pedidos` con los datos de entrega y solo `código + cantidad` de cada producto. El precio lo pone el servidor y el stock se descuenta en la misma operación; si otro cliente se llevó el último, se muestra el motivo y se actualiza el stock.
+- Variables: `VITE_PRODUCTOS_API_URL` y `VITE_PEDIDOS_API_URL` (en producción, `/api/productos-service` y `/api/pedidos-service`).
+
+## Producción con Docker
+
+- `.env.production` apunta a rutas relativas (`/api/auth-service`, `/api/servicios-service`, `/api/mascotas-service`, `/api/citas-service`, `/api/fichas-service`, `/api/productos-service`, `/api/pedidos-service`).
+- `Dockerfile`: compila con Vite y sirve con Nginx; `nginx/default.conf` reenvía cada ruta `/api/<servicio>-service/` al microservicio y devuelve `index.html` para las rutas de React Router.
+- Se levanta junto al backend con el `docker-compose.yml` del repositorio backend (ver `DESPLIEGUE_AWS.md` allí).

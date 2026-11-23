@@ -9,7 +9,7 @@
 .admin-encabezado-acciones { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .admin-sesion { display: inline-flex; align-items: center; gap: .5rem; color: var(--color-texto-suave); font-size: .86rem; }
 .admin-punto, .admin-estado span { width: .5rem; height: .5rem; display: inline-block; border-radius: 50%; background: #28a56a; }
-.admin-resumen { min-height: 110px; display: flex; align-items: center; gap: 1rem; padding: 1.25rem; background: #fff; border: 1px solid #e1e8ee; border-radius: 14px; box-shadow: 0 5px 18px rgba(20,48,68,.045); }
+.admin-resumen { height: 100%; min-height: 110px; display: flex; align-items: center; gap: 1rem; padding: 1.25rem; background: #fff; border: 1px solid #e1e8ee; border-radius: 14px; box-shadow: 0 5px 18px rgba(20,48,68,.045); }
 .admin-resumen-icono { display: grid; place-items: center; flex: 0 0 48px; width: 48px; height: 48px; border-radius: 12px; font-size: 1.35rem; }
 .admin-resumen-icono.azul { color: #2873b9; background: #e9f3ff; }
 .admin-resumen-icono.verde { color: #168455; background: #e7f8ef; }

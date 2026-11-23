@@ -6,7 +6,6 @@ import CompraFallida from "./CompraFallida";
 
 describe("CompraFallida", () => {
   const compra = {
-    numero: "12345678",
     datos: {
       nombre: "Pedro",
       apellidos: "Soto",

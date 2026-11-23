@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import { listarCitas } from "../services/citaService";
 import { listarMascotas } from "../services/mascotaService";
 import { listarUsuarios } from "../services/usuarioService";
-import { resumirReportes } from "../utils/reportes";
 
-// Junta lo que el administrador puede ver de todo el sistema: cuentas (ms-auth), citas (ms-citas) y
+// Junta (sin procesar) lo que el administrador puede ver de todo el sistema: cuentas (ms-auth), citas (ms-citas) y
 // mascotas (ms-mascotas). El administrador recibe las listas completas, no solo las propias.
 export function useReportes() {
-  const [reporte, setReporte] = useState(null);
+  const [datos, setDatos] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [sesionVencida, setSesionVencida] = useState(false);
@@ -20,7 +19,7 @@ export function useReportes() {
     Promise.all([listarUsuarios(), listarCitas(), listarMascotas()])
       .then(([usuarios, citas, mascotas]) => {
         if (!activo) return;
-        setReporte(resumirReportes({ usuarios, citas, mascotas }));
+        setDatos({ usuarios, citas, mascotas });
         setError("");
       })
       .catch((e) => {
@@ -41,5 +40,5 @@ export function useReportes() {
     setIntento((n) => n + 1);
   }
 
-  return { reporte, cargando, error, sesionVencida, recargar };
+  return { datos, cargando, error, sesionVencida, recargar };
 }

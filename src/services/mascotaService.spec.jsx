@@ -44,7 +44,12 @@ describe("mascotaService", () => {
       esterilizado: true,
       observaciones: "",
       tutorCorreo: "ana@correo.cl",
+      registradaEn: "",
     });
+  });
+
+  it("conserva el día en que se registró la mascota", () => {
+    expect(desdeApi({ ...deLaApi, registradaEn: "2026-11-02" }).registradaEn).toBe("2026-11-02");
   });
 
   it("convierte los datos del formulario al formato de la API", () => {

@@ -15,6 +15,9 @@ function MenuRecepcion() {
       <Nav.Link as={NavLink} to="/recepcion/fichas">
         Fichas de pacientes
       </Nav.Link>
+      <Nav.Link as={NavLink} to="/recepcion/pedidos">
+        Pedidos
+      </Nav.Link>
     </Nav>
   );
 }

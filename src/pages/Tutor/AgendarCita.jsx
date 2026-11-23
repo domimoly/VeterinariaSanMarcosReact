@@ -9,10 +9,9 @@ import PasoTutor from "../../components/Tutor/PasoTutor";
 import PasoConfirmacion from "../../components/Tutor/PasoConfirmacion";
 import CitaSolicitada from "../../components/Tutor/CitaSolicitada";
 import { pasosCita } from "../../data/Tutor/pasosCita";
-import { usuarioDemo } from "../../data/Tutor/usuario";
 import { useCitas } from "../../hooks/useCitas";
 import { useMascotas } from "../../hooks/useMascotas";
-import { leerJSON } from "../../utils/almacenamiento";
+import { usePerfil } from "../../hooks/usePerfil";
 import "./Tutor.css";
 
 const citaInicial = {
@@ -35,8 +34,8 @@ function AgendarCita() {
   // Las mascotas son las que el dueño registró en Mi perfil (vienen de ms-mascotas)
   const { mascotas, cargando, error, sesionVencida: mascotasSinSesion, recargar } = useMascotas();
 
-  // Los datos del tutor vienen del perfil
-  const [usuario] = useState(() => leerJSON("usuarioVeterinariaSanMarcos", usuarioDemo));
+  // Los datos del tutor vienen de su perfil (ms-auth)
+  const { perfil: usuario, cargando: cargandoPerfil, error: errorPerfil, sesionVencida: perfilSinSesion, recargar: recargarPerfil } = usePerfil();
 
   // Citas que el dueño ya solicitó (vienen de ms-citas; sirven para avisar si su mascota ya tiene hora ese día)
   const { citas: citasGuardadas, crear, errorAccion, limpiarError, sesionVencida: citasSinSesion } = useCitas();
@@ -83,7 +82,7 @@ function AgendarCita() {
   }
 
   // El token venció mientras se usaba la página
-  if (mascotasSinSesion || citasSinSesion) return <Navigate to="/sesion-requerida" replace />;
+  if (mascotasSinSesion || citasSinSesion || perfilSinSesion) return <Navigate to="/sesion-requerida" replace />;
 
   if (solicitud) {
     return (
@@ -105,22 +104,29 @@ function AgendarCita() {
       <div className="row g-4">
         <div className="col-12 col-lg-8">
           <section className="perfil-caja">
-            {paso === 1 && cargando && (
+            {paso === 1 && (cargando || cargandoPerfil) && (
               <p className="text-secondary mb-0" role="status">
                 Cargando tus mascotas...
               </p>
             )}
 
-            {paso === 1 && !cargando && error && (
+            {paso === 1 && !cargando && !cargandoPerfil && (error || errorPerfil) && (
               <Alert variant="danger" role="alert" className="mb-0">
-                {error}{" "}
-                <Alert.Link as="button" type="button" onClick={recargar}>
+                {error || errorPerfil}{" "}
+                <Alert.Link
+                  as="button"
+                  type="button"
+                  onClick={() => {
+                    if (error) recargar();
+                    if (errorPerfil) recargarPerfil();
+                  }}
+                >
                   Reintentar
                 </Alert.Link>
               </Alert>
             )}
 
-            {paso === 1 && !cargando && !error && (
+            {paso === 1 && !cargando && !cargandoPerfil && !error && !errorPerfil && (
               <PasoMascota
                 mascotas={mascotas}
                 cita={cita}
@@ -138,7 +144,7 @@ function AgendarCita() {
               />
             )}
 
-            {paso === 3 && (
+            {paso === 3 && usuario && (
               <PasoTutor
                 usuario={usuario}
                 cita={cita}

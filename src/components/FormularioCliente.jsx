@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { regiones } from "../data/Tutor/regiones";
 import { formatearPrecio } from "../utils/precios";
 
-function FormularioCliente({ datosIniciales, total, onPagar }) {
+function FormularioCliente({ datosIniciales, total, onPagar, enviando = false, error = "" }) {
   const [datos, setDatos] = useState(datosIniciales);
   const [errores, setErrores] = useState({});
 
@@ -194,9 +194,15 @@ function FormularioCliente({ datosIniciales, total, onPagar }) {
         </Col>
       </Row>
 
+      {error && (
+        <Alert variant="danger" role="alert" className="mt-3 mb-0">
+          {error}
+        </Alert>
+      )}
+
       <div className="text-end mt-3">
-        <Button type="submit" className="btn-contacto">
-          Pagar ahora {formatearPrecio(total)}
+        <Button type="submit" className="btn-contacto" disabled={enviando}>
+          {enviando ? "Procesando pago..." : `Pagar ahora ${formatearPrecio(total)}`}
         </Button>
       </div>
     </Form>

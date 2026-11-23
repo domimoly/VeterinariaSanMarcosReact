@@ -26,8 +26,14 @@ import ErrorServidor from "./pages/Errores/ErrorServidor";
 import LimiteError from "./components/Errores/LimiteError";
 import AgendaCitas from "./pages/Recepcionista/AgendaCitas";
 import FichasPacientes from "./pages/Recepcionista/FichasPacientes";
+import Productos from "./pages/Admin/Productos";
+import GestionPedidos from "./pages/Recepcionista/GestionPedidos";
+import MisPedidos from "./pages/Tutor/MisPedidos";
+import { useRenovacionSesion } from "./hooks/useRenovacionSesion";
 
 function App() {
+  useRenovacionSesion();
+
   return (
     <>
       <Cabecera />
@@ -44,23 +50,30 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
 
+          {/* Comprar exige sesión (cualquier rol); el catálogo de la tienda es público, como en toda tienda online */}
+          <Route element={<RutaProtegida />}>
+            <Route path="/carrito" element={<Carrito />} />
+          </Route>
+
           <Route element={<RutaProtegida roles={[ROLES.tutor]} />}>
             <Route path="/mi-perfil" element={<MiPerfil />} />
             <Route path="/agendar-cita" element={<AgendarCita />} />
+            <Route path="/mis-pedidos" element={<MisPedidos />} />
           </Route>
 
           <Route element={<RutaProtegida roles={[ROLES.recepcionista, ROLES.administrador]} />}>
             <Route path="/recepcion" element={<AgendaCitas />} />
             <Route path="/recepcion/fichas" element={<FichasPacientes />} />
+            <Route path="/recepcion/pedidos" element={<GestionPedidos />} />
           </Route>
 
           <Route element={<RutaProtegida roles={[ROLES.administrador]} />}>
             <Route path="/admin/usuarios" element={<Usuarios />} />
             <Route path="/admin/reportes" element={<Reportes />} />
+            <Route path="/admin/productos" element={<Productos />} />
           </Route>
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/tienda" element={<Tienda />} />
-          <Route path="/carrito" element={<Carrito />} />
           <Route path="/sesion-requerida" element={<SinSesion />} />
           <Route path="/acceso-denegado" element={<SinPermiso />} />
           <Route path="/error" element={<ErrorServidor />} />

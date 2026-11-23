@@ -15,6 +15,7 @@ export function desdeApi(m) {
     esterilizado: Boolean(m.esterilizada),
     observaciones: m.observaciones ?? "",
     tutorCorreo: m.tutorCorreo,
+    registradaEn: m.registradaEn ?? "",
   };
 }
 

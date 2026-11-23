@@ -1,4 +1,4 @@
-import { ROLES, cerrarSesion, guardarSesion, obtenerToken, obtenerUsuarioSesion, rutaInicialDelRol } from "./sesion";
+import { ROLES, cerrarSesion, expiracionDelToken, guardarSesion, obtenerToken, obtenerUsuarioSesion, rutaInicialDelRol } from "./sesion";
 
 const respuesta = { token: "abc.def.ghi", nombre: "Ana Pérez", correo: "ana@correo.cl", rol: "TUTOR" };
 
@@ -34,5 +34,11 @@ describe("sesion", () => {
     expect(rutaInicialDelRol(ROLES.tutor)).toBe("/mi-perfil");
     expect(rutaInicialDelRol(ROLES.recepcionista)).toBe("/recepcion");
     expect(rutaInicialDelRol(ROLES.administrador)).toBe("/admin/usuarios");
+  });
+
+  it("lee la expiración del JWT y devuelve null si el token no es válido", () => {
+    const carga = btoa(JSON.stringify({ exp: 1700000000 }));
+    expect(expiracionDelToken(`a.${carga}.c`)).toBe(1700000000 * 1000);
+    expect(expiracionDelToken("no-es-un-jwt")).toBeNull();
   });
 });

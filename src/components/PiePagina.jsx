@@ -33,6 +33,9 @@ function PiePagina() {
                 <Link to="/servicios">Nuestros servicios</Link>
               </li>
               <li>
+                <Link to="/tienda">Tienda</Link>
+              </li>
+              <li>
                 <Link to="/blog">Blog veterinario</Link>
               </li>
               <li>
